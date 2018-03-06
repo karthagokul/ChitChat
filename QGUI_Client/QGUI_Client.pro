@@ -17,12 +17,15 @@ SOURCES += main.cpp\
         widget.cpp \
     ../common/messagehandler.cpp \
     serverlogindialog.cpp \
-    clientconnection.cpp
+    clientconnection.cpp \
+    mainwindow.cpp
 
 HEADERS  += widget.h \
     ../common/messagehandler.h \
     serverlogindialog.h \
-    clientconnection.h
+    clientconnection.h \
+    mainwindow.h
 
 FORMS    += widget.ui \
-    serverlogindialog.ui
+    serverlogindialog.ui \
+    mainwindow.ui
