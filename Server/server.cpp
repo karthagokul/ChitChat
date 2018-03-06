@@ -1,10 +1,10 @@
 #include "server.h"
-#include "chatconnection.h"
 #include <QHostAddress>
 #include <QNetworkInterface>
+#include "chatroom.h"
 
 Server::Server(QObject *aParent)
-    :QTcpServer(aParent)
+    :QTcpServer(aParent),mChatRoom(0)
 {
 
 }
@@ -12,25 +12,29 @@ Server::Server(QObject *aParent)
 Server::~Server()
 {
     qDebug()<<"Closing Sockets";
+    mChatRoom->closeAllSessions();
+    delete mChatRoom;
+    mChatRoom=0;
 }
 
 bool Server::init()
 {
-    QString ipAddress;
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-    // use the first non-localhost IPv4 address
-    for (int i = 0; i < ipAddressesList.size(); ++i)
+    if(mChatRoom)
     {
-        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&  ipAddressesList.at(i).toIPv4Address()) {
-            ipAddress = ipAddressesList.at(i).toString();
-            break;
-        }
+        qCritical()<<"Chat Room is Already Active";
+        return false;
     }
-    // if we did not find one, use IPv4 localhost
-    if (ipAddress.isEmpty())
-        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
-
-    qDebug()<<"Using IP :"<<ipAddress;
+    mChatRoom=new ChatRoom(this);
+    listen(QHostAddress::Any,server_port);
+    qDebug()<<"Server Has Been Started on "<<serverAddress()<<":"<<serverPort();
 
     return true;
 }
+
+void Server::incomingConnection(qintptr socketDescriptor)
+{
+    qDebug() << socketDescriptor << " Connecting...";
+    mChatRoom->createNewSession(socketDescriptor);
+
+}
+

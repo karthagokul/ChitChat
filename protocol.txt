@@ -1,0 +1,26 @@
+
+Buddy Information
+{
+  "online": [
+    "Thomas",
+    "Salvatore",
+    "Farhan"
+  ],
+  "version": 1.0
+}
+
+Message from Server to all clients
+{
+   buddy:"Gokul"
+   message: "Welcome"
+}
+
+Message to Server from Client
+{
+   message: "Welcome"
+}
+
+{
+   buddy: "Thomas"
+   message: "Welcome"
+}

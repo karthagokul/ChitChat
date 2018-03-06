@@ -18,9 +18,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     server.cpp \
     chatconnection.cpp \
-    serverapplication.cpp
+    serverapplication.cpp \
+    chatroom.cpp \
+    messagehandler.cpp
 
 HEADERS += \
     server.h \
     chatconnection.h \
-    serverapplication.h
+    serverapplication.h \
+    chatroom.h \
+    messagehandler.h

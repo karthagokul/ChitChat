@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QTcpServer>
 
-class ChatConnection;
+class ChatRoom;
 
 const int server_port=8080;
 
@@ -28,33 +28,10 @@ public:
      */
     virtual ~Server();
 
-    /*!
-     * \brief setHostAddress
-     * \param aHostAddress
-     * \return
-     */
-    bool setHostAddress(const QString &aHostAddress)
-    {
-        mHostAddress=aHostAddress;
-        return true;
-    }
-
-    /*!
-     * \brief setPortNumber
-     * \param aPortNumber
-     * \return
-     */
-    bool setPortNumber(const int &aPortNumber)
-    {
-        mPort=aPortNumber;
-        return true;
-    }
+    void incomingConnection(qintptr socketDescriptor);
 
 private:
-    QMap<QString,ChatConnection*> mOnlineClients;
-    QString mHostAddress;
-    int mPort;
-
+    ChatRoom *mChatRoom;
 };
 
 #endif // SERVER_H
