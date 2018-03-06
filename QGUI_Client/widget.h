@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include<QStringListModel>
 
 
 namespace Ui {
@@ -23,10 +24,14 @@ protected slots:
     void onSetServerData(QString aHostIp ,QString aPort,QString aAvatarName);
     void onLogonButtonClick();
     void onSessionStateChanged();
+    void onBuddyList();
+    void onNewMessage(QString aMessage,QString aSender);
+    void onSendButtonClick();
 
 private:
     Ui::Widget *mUi;
     ClientConnection *mConnection;
+    QStringListModel mBuddyListModel;
 
 };
 

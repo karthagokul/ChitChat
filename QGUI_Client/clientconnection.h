@@ -14,13 +14,22 @@ public:
     void setUserName(QString aName);
     void stop();
     void start();
+    void send(QString &aData);
     bool isActive()
     {
         return mActive;
     }
 
+    QStringList buddies()
+    {
+        return mBuddies;
+    }
+
 signals:
     void stateChanged();
+    void buddylist();
+    //need to change the below logic
+    void newMessage(QString message,QString sender);
 
 protected slots:
     void onConnected();
@@ -33,6 +42,7 @@ private:
     QString mHostIp;
     int mPort;
     bool mActive;
+    QStringList mBuddies;
 };
 
 #endif // CLIENTCONNECTION_H

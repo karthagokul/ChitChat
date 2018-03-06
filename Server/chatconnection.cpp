@@ -62,7 +62,11 @@ void ChatConnection::readyRead()
         mName=newMessage.message;
         emit loggedin(newMessage,mSocketDescriptor);
         break;
+    case Chat:
+        emit newmessage(newMessage,mSocketDescriptor);
+        break;
     default:
+
         break;
     }
 }

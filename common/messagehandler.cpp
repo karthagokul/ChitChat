@@ -63,6 +63,37 @@ Message MessageHandler::parseMessageFromClient(const QByteArray &aData)
             qCritical()<<"Wrong Format";
         }
     }
+    else
+    {
+         m.type=Chat;
+         if(dataObject.contains(MESSAGE))
+         {
+             m.message=dataObject[MESSAGE].toString();
+             if(dataObject.contains(SENDER))
+             {
+                m.sender=dataObject[SENDER].toString();
+             }
+             else
+             {
+                 qCritical()<<"Invalid Protocol:Message Must be send from a user";
+                 m.type=Invalid;
+             }
+             if(dataObject.contains(BUDDIES))
+             {
+                 //we need to change type to mention
+                 //This message is for few specific ones
+             }
+             else
+             {
+                 //Broadcast
+             }
+         }
+         else
+         {
+             qCritical()<<"Wrong Format";
+             m.type=Invalid;
+         }
+    }
     return m;
 }
 
@@ -89,6 +120,20 @@ Message MessageHandler::parseMessageFromServer(const QByteArray &aData)
         }
         m.type=Online;
     }
+    else if(dataObject.contains(MESSAGE))
+    {
+        m.type=Chat;
+        m.message=dataObject[MESSAGE].toString();
+        if(dataObject.contains(SENDER))
+        {
+           m.sender=dataObject[SENDER].toString();
+        }
+        else
+        {
+            qCritical()<<"Invalid Protocol:Message Must be send from a user";
+            m.type=Invalid;
+        }
+    }
     return m;
 }
 
@@ -103,7 +148,6 @@ QByteArray MessageHandler::createMessage(const Message &aMessage)
     QJsonObject rootobj;
     if(aMessage.type==LogOn)
     {
-
         rootobj[LOGON]=QJsonArray();
         rootobj[MESSAGE]=aMessage.message;
 
@@ -111,6 +155,11 @@ QByteArray MessageHandler::createMessage(const Message &aMessage)
     else if(aMessage.type==Online)
     {
         rootobj[ONLINE]=QJsonArray::fromStringList(aMessage.buddies);
+    }
+    else if(aMessage.type==Chat)
+    {
+        rootobj[MESSAGE]=aMessage.message;
+        rootobj[SENDER]=aMessage.sender;
     }
     d.setObject(rootobj);
     return d.toBinaryData();

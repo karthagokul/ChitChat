@@ -73,6 +73,7 @@ void ClientConnection::stop()
 
 void ClientConnection::onRead()
 {
+    qDebug()<<"Reading";
     //QByteArray dataBytes = mSocket->readAll();
     //QString data=QString::fromStdString(dataBytes.toStdString());
     //qDebug()  << " Server Says: " << data;
@@ -84,11 +85,41 @@ void ClientConnection::onRead()
         break;
     case Online:
         qDebug()<<"Got Buddies: " <<readmessage.buddies;
+        mBuddies=readmessage.buddies;
+        emit buddylist();
         break;
-    default:
+    case Chat:
+        qDebug()<<readmessage.sender<<":"<<readmessage.message;
+        if(readmessage.sender==mName)
+        {
+            emit newMessage(readmessage.message,"You");
+        }
+        else
+        {
+            emit newMessage(readmessage.message,readmessage.sender);
+        }
+        default:
         break;
     }
 
+}
+
+void ClientConnection::send(QString &aData)
+{
+    if(!isActive())
+    {
+        qCritical()<<"No Active Connection to send Message";
+        return;
+    }
+    qDebug()<<"Sending";
+    //ToDo , Check if there are user mention, if so , do act
+    Message newMessage;
+    newMessage.type=Chat;
+    newMessage.message=aData;
+    newMessage.sender=mName;
+    MessageHandler mH;
+    QByteArray data=mH.createMessage(newMessage);
+    mSocket->write(data);
 }
 
 ClientConnection::~ClientConnection()

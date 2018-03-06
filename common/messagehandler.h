@@ -7,6 +7,8 @@
 #define ONLINE "online"
 #define LOGON "logon"
 #define MESSAGE "message"
+#define BUDDIES "buddies"
+#define SENDER "sender"
 
 enum MessageType {Invalid=1,Chat,Mention,Online,LogOn};
 
@@ -14,6 +16,7 @@ struct Message
 {
     MessageType type;
     QStringList buddies;
+    QString sender;
     QString message;
 };
 

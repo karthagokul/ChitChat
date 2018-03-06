@@ -12,7 +12,10 @@ Widget::Widget(QWidget *parent) :
     mUi->setupUi(this);
     connect(mUi->settingsButton,SIGNAL(clicked(bool)),this,SLOT(showLoginDialog()));
     connect(mUi->logonButton,SIGNAL(clicked(bool)),this,SLOT(onLogonButtonClick()));
+    connect(mUi->sendButton,SIGNAL(clicked(bool)),this,SLOT(onSendButtonClick()));
     connect(mConnection,SIGNAL(stateChanged()),this,SLOT(onSessionStateChanged()));
+    connect(mConnection,SIGNAL(buddylist()),this,SLOT(onBuddyList()));
+    connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
 }
 
 void Widget::showLoginDialog()
@@ -49,6 +52,25 @@ void Widget::onSetServerData(QString aHostIp ,QString aPort,QString aAvatarName)
 {
     mConnection->setServer(aHostIp,aPort.toInt());
     mConnection->setUserName(aAvatarName);
+}
+void Widget::onBuddyList()
+{
+    mBuddyListModel.setStringList(mConnection->buddies());
+    mUi->buddyListView->setModel(&mBuddyListModel);
+}
+
+void  Widget::onSendButtonClick()
+{
+    QString text=mUi->inputTextView->toPlainText();
+    mConnection->send(text);
+    mUi->inputTextView->clear();
+}
+
+void Widget::onNewMessage(QString aMessage,QString aSender)
+{
+    //mUi->chatView->append("\n");
+    mUi->chatView->append(aSender+":"+aMessage);
+
 }
 
 Widget::~Widget()

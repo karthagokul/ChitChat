@@ -40,16 +40,6 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QTextBrowser" name="inputTextView">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>360</y>
-     <width>601</width>
-     <height>71</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="sendButton">
    <property name="geometry">
     <rect>
@@ -61,6 +51,16 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Send</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="inputTextView">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>360</y>
+     <width>551</width>
+     <height>41</height>
+    </rect>
    </property>
   </widget>
   <widget class="QWidget" name="">

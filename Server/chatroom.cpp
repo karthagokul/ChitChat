@@ -2,6 +2,7 @@
 #include "chatconnection.h"
 #include "messagehandler.h"
 
+
 ChatRoom::ChatRoom(QObject *aParent)
     :QObject(aParent)
 {
@@ -33,7 +34,7 @@ void  ChatRoom::broadcastMessage(const Message &aMessage,const qintptr&sessionId
 
 void ChatRoom::onMessageRequest(const Message &aMessage,const qintptr&sessionId)
 {
-
+    broadcastMessage(aMessage,-1);
 }
 
 QStringList ChatRoom::getBuddies(const qintptr&sessionId)
@@ -78,6 +79,14 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
             mOnlineClients.remove(i.key());
         }
     }
+
+    //InformingOthers
+
+    Message onlinelist;
+    onlinelist.type=Online;
+    onlinelist.buddies=getBuddies(sessionId);
+    broadcastMessage(onlinelist,-1);
+
     //qDebug()<<"total clients"<<mOnlineClients.count();
 }
 
@@ -90,7 +99,7 @@ void ChatRoom::createNewSession(const qintptr socketSessionId)
     connect(newClient, SIGNAL(finished()), newClient, SLOT(deleteLater()));
     connect(newClient,SIGNAL(disconnecting(qintptr)),this,SLOT(onClientDisConnection(qintptr)));
     connect(newClient,SIGNAL(loggedin(Message,qintptr)),this,SLOT(onLogon(Message,qintptr)));
-
+    connect(newClient,SIGNAL(newmessage(Message,qintptr)),this,SLOT(onMessageRequest(Message,qintptr)));
     //Lets Insert to Online map
     mOnlineClients.insert(socketSessionId,newClient);
     newClient->start();
