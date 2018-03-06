@@ -4,6 +4,7 @@
 ClientConnection::ClientConnection(QObject *parent) :
     QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false),mName(QHostInfo::localHostName())
 {
+    connect(mSocket,SIGNAL(readyRead()),this,SLOT(onRead()));
     connect(mSocket,SIGNAL(connected()),this,SLOT(onConnected()));
     connect(mSocket,SIGNAL(disconnected()),this,SLOT(onDisconnected()));
     connect(mSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(onError(QAbstractSocket::SocketError)));
@@ -19,7 +20,6 @@ void ClientConnection::setUserName(QString aName)
 {
     mName=aName;
 }
-
 
 void ClientConnection::onConnected()
 {
@@ -69,6 +69,26 @@ void ClientConnection::stop()
     }
     mSocket->disconnectFromHost();
     mSocket->close();
+}
+
+void ClientConnection::onRead()
+{
+    //QByteArray dataBytes = mSocket->readAll();
+    //QString data=QString::fromStdString(dataBytes.toStdString());
+    //qDebug()  << " Server Says: " << data;
+    MessageHandler mH;
+    Message readmessage=mH.parseMessageFromServer(mSocket->readAll());
+    switch (readmessage.type) {
+    case Invalid:
+        qDebug()<<"Unsupported Message Type";
+        break;
+    case Online:
+        qDebug()<<"Got Buddies: " <<readmessage.buddies;
+        break;
+    default:
+        break;
+    }
+
 }
 
 ClientConnection::~ClientConnection()

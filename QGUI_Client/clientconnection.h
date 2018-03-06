@@ -26,6 +26,7 @@ protected slots:
     void onConnected();
     void onDisconnected();
     void onError(QAbstractSocket::SocketError aError);
+    void onRead();
 private:
     QTcpSocket *mSocket;
     QString mName;

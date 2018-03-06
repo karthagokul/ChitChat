@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QMap>
-
+#include "messagehandler.h"
 class ChatConnection;
 
 class ChatRoom :public QObject
@@ -11,12 +11,16 @@ class ChatRoom :public QObject
     Q_OBJECT
 public:
     ChatRoom(QObject *aParent);
-    void createNewSession(qintptr socketSessionId);
+    void createNewSession(const qintptr socketSessionId);
     void closeAllSessions();
-    QStringList getBuddies();
-
+private:
+    QStringList getBuddies(const qintptr&sessionId);
 protected slots:
     void onClientDisConnection(const qintptr&sessionId);
+    void onLogon(const Message &aMessage,const qintptr&sessionId);
+    void onMessageRequest(const Message &aMessage,const qintptr&sessionId);
+private:
+    void broadcastMessage(const Message &aMessage,const qintptr&sessionId=-1);
 private:
     QMap<qintptr,ChatConnection*> mOnlineClients;
 };

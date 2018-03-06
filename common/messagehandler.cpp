@@ -78,12 +78,13 @@ Message MessageHandler::parseMessageFromServer(const QByteArray &aData)
     QJsonObject dataObject = d.object();
     if(dataObject.contains(ONLINE))
     {
-        QJsonArray onlinearay=dataObject["Online"].toArray();
+        //qDebug()<<"Got Online Status";
+        QJsonArray onlinearay=dataObject[ONLINE].toArray();
         QVariantList buddies=onlinearay.toVariantList();
         for (QVariantList::iterator j = buddies.begin(); j != buddies.end(); j++)
         {
-            qDebug() << "iterating through QVariantList ";
-            qDebug() << (*j).toString(); // Print QVariant
+            //qDebug() << "iterating through QVariantList ";
+            //qDebug() << (*j).toString(); // Print QVariant
             m.buddies<< (*j).toString();
         }
         m.type=Online;

@@ -4,8 +4,8 @@
 #include <QtNetwork>
 
 
-ChatConnection::ChatConnection(const ChatRoom *aRoom,qintptr aSocketID, QObject *aParent) :
-    QThread(aParent),mChatRoom(aRoom)
+ChatConnection::ChatConnection(qintptr aSocketID, QObject *aParent) :
+    QThread(aParent)
 {
     this->mSocketDescriptor = aSocketID;
 }
@@ -50,30 +50,33 @@ void ChatConnection::run()
 
 void ChatConnection::readyRead()
 {
-    // get the information
-    QByteArray dataBytes = mSocket->readAll();
 
-    QString data=QString::fromStdString(dataBytes.toStdString());
-    //qDebug() << mSocketDescriptor << " Client Says: " << data;
     MessageHandler messageHandle;
-    Message newMessage=messageHandle.parseMessageFromClient(dataBytes);
+    Message newMessage=messageHandle.parseMessageFromClient(mSocket->readAll());
     switch (newMessage.type) {
     case Invalid:
         qDebug()<<"Unsupported Message Type";
         break;
     case LogOn:
         qDebug()<<"New Login : " <<newMessage.message;
+        mName=newMessage.message;
+        emit loggedin(newMessage,mSocketDescriptor);
         break;
     default:
         break;
     }
-    //mSocket->write(Data);
 }
+
+void ChatConnection::write(QByteArray aData)
+{
+    mSocket->write(aData);
+}
+
 
 void ChatConnection::disconnected()
 {
     emit disconnecting(this->mSocketDescriptor);
-    qDebug() << mSocketDescriptor << " Disconnected";
+    qDebug() << mName << ":Disconnected";
     mSocket->deleteLater();
     exit(0);
 }

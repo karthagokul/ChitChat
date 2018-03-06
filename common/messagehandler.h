@@ -2,6 +2,7 @@
 #define MESSAGEHANDLER_H
 
 #include <QStringList>
+#include <QObject>
 
 #define ONLINE "online"
 #define LOGON "logon"
@@ -15,6 +16,7 @@ struct Message
     QStringList buddies;
     QString message;
 };
+
 
 class MessageHandler
 {
