@@ -127,6 +127,7 @@ Message MessageHandler::parseMessageFromServer(const QByteArray &aData)
         if(dataObject.contains(SENDER))
         {
            m.sender=dataObject[SENDER].toString();
+           qDebug()<<m.message;
         }
         else
         {

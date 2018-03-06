@@ -73,7 +73,10 @@ void ChatConnection::readyRead()
 
 void ChatConnection::write(QByteArray aData)
 {
+    //Bug if you are calling this function two times immediately, todo
+    qDebug()<<"Sending";
     mSocket->write(aData);
+    mSocket->waitForBytesWritten();
 }
 
 
@@ -84,3 +87,4 @@ void ChatConnection::disconnected()
     mSocket->deleteLater();
     exit(0);
 }
+

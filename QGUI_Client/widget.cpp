@@ -46,6 +46,7 @@ void Widget::onSessionStateChanged()
     else
     {
         mUi->logonButton->setText("Log On");
+        onBuddyList();
     }
 }
 

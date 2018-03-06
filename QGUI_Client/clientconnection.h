@@ -25,6 +25,9 @@ public:
         return mBuddies;
     }
 
+private:
+    QString getRandomName() const;
+
 signals:
     void stateChanged();
     void buddylist();

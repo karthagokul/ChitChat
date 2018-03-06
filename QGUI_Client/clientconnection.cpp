@@ -2,7 +2,7 @@
 #include "messagehandler.h"
 
 ClientConnection::ClientConnection(QObject *parent) :
-    QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false),mName(QHostInfo::localHostName())
+    QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false),mName(getRandomName())
 {
     connect(mSocket,SIGNAL(readyRead()),this,SLOT(onRead()));
     connect(mSocket,SIGNAL(connected()),this,SLOT(onConnected()));
@@ -82,6 +82,10 @@ void ClientConnection::stop()
     }
     mSocket->disconnectFromHost();
     mSocket->close();
+    mBuddies.clear();
+    emit stateChanged();
+    emit newMessage("Logged Out from Chat Server !","You");
+
 }
 
 void ClientConnection::onRead()
@@ -144,3 +148,17 @@ ClientConnection::~ClientConnection()
     }
 }
 
+QString ClientConnection::getRandomName() const
+{
+   const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+   const int randomStringLength = 6; // assuming you want random strings of 12 characters
+
+   QString randomString;
+   for(int i=0; i<randomStringLength; ++i)
+   {
+       int index = qrand() % possibleCharacters.length();
+       QChar nextChar = possibleCharacters.at(index);
+       randomString.append(nextChar);
+   }
+   return QHostInfo::localHostName()+"#"+randomString;
+}

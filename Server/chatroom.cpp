@@ -70,22 +70,37 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
     //qDebug()<<"total clients"<<mOnlineClients.count();
     qDebug()<<sessionId<<" left Chatroom";
     //Lets Remove the Online Client from Chatroom
+    QString signOffUser;
     QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
         if(i.key()==sessionId)
         {
             qDebug()<<"Found one";
+            signOffUser=i.value()->name();
             mOnlineClients.remove(i.key());
         }
     }
 
     //InformingOthers
+    //Send a Custom Message which is visible on chat window
+    Message signOffNotification;
+    signOffNotification.type=Chat;
+    signOffNotification.sender="Server Bot";
+    signOffNotification.message=signOffUser+"Left Room !";
+    qDebug()<<signOffUser+"Left Room !";
+    broadcastMessage(signOffNotification,-1);
 
+    //Update the client list
     Message onlinelist;
     onlinelist.type=Online;
     onlinelist.buddies=getBuddies(sessionId);
     broadcastMessage(onlinelist,-1);
+
+
+
+
+
 
     //qDebug()<<"total clients"<<mOnlineClients.count();
 }
