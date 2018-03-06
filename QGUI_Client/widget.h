@@ -27,6 +27,7 @@ protected slots:
     void onBuddyList();
     void onNewMessage(QString aMessage,QString aSender);
     void onSendButtonClick();
+    void onError(QString aMessage);
 
 private:
     Ui::Widget *mUi;

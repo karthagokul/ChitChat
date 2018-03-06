@@ -30,6 +30,7 @@ signals:
     void buddylist();
     //need to change the below logic
     void newMessage(QString message,QString sender);
+    void error(QString aMessage);
 
 protected slots:
     void onConnected();

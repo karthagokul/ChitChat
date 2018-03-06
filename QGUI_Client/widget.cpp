@@ -16,6 +16,7 @@ Widget::Widget(QWidget *parent) :
     connect(mConnection,SIGNAL(stateChanged()),this,SLOT(onSessionStateChanged()));
     connect(mConnection,SIGNAL(buddylist()),this,SLOT(onBuddyList()));
     connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
+    connect(mConnection,SIGNAL(error(QString)),this,SLOT(onError(QString)));
 }
 
 void Widget::showLoginDialog()
@@ -71,6 +72,10 @@ void Widget::onNewMessage(QString aMessage,QString aSender)
     //mUi->chatView->append("\n");
     mUi->chatView->append(aSender+":"+aMessage);
 
+}
+void Widget::onError(QString aMessage)
+{
+    mUi->chatView->append("Error:"+aMessage);
 }
 
 Widget::~Widget()

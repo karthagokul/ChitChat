@@ -57,6 +57,19 @@ void ClientConnection::onError(QAbstractSocket::SocketError aError)
 {
     qDebug()<<aError;
 
+    switch(aError)
+    {
+    case QAbstractSocket::ConnectionRefusedError:
+        emit error("Connected Refused to "+mHostIp);
+        break;
+    case QAbstractSocket::RemoteHostClosedError:
+        emit error("Server Went Down at "+mHostIp);
+        break;
+    default:
+        emit error("Unknown Error");
+        break;
+    }
+
     emit stateChanged();
 }
 
@@ -98,7 +111,7 @@ void ClientConnection::onRead()
         {
             emit newMessage(readmessage.message,readmessage.sender);
         }
-        default:
+    default:
         break;
     }
 

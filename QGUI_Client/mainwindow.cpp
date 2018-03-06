@@ -20,5 +20,5 @@ void MainWindow::onCreateNewChatWindow()
 {
     Widget *w=new Widget(this);
     w->show();
-    ui->tabWidget->addTab(w,"Connection");
+    ui->tabWidget->addTab(w,"Connection:"+QString::number(ui->tabWidget->count()+1));
  }
