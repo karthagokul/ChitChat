@@ -1,4 +1,11 @@
-
+Query Server
+ {
+  "logon":[],
+  "version": 1.0
+ }
+ 
+ Logon
+ 
 Buddy Information
 {
   "online": [

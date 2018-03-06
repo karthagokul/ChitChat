@@ -45,5 +45,5 @@ if __name__ == "__main__":
             #user entered a message
             else :
                 msg = sys.stdin.readline()
-                s.send(msg)
+                s.send(msg.rstrip())
                 prompt()

@@ -1,9 +1,11 @@
 #include "chatconnection.h"
+#include "messagehandler.h"
+#include "chatroom.h"
 #include <QtNetwork>
 
 
-ChatConnection::ChatConnection(qintptr aSocketID, QObject *aParent) :
-    QThread(aParent)
+ChatConnection::ChatConnection(const ChatRoom *aRoom,qintptr aSocketID, QObject *aParent) :
+    QThread(aParent),mChatRoom(aRoom)
 {
     this->mSocketDescriptor = aSocketID;
 }
@@ -52,9 +54,20 @@ void ChatConnection::readyRead()
     QByteArray dataBytes = mSocket->readAll();
 
     QString data=QString::fromStdString(dataBytes.toStdString());
-    qDebug() << mSocketDescriptor << " Client Says: " << data;
-
-     //mSocket->write(Data);
+    //qDebug() << mSocketDescriptor << " Client Says: " << data;
+    MessageHandler messageHandle;
+    Message newMessage=messageHandle.parseMessageFromClient(dataBytes);
+    switch (newMessage.type) {
+    case Invalid:
+        qDebug()<<"Unsupported Message Type";
+        break;
+    case LogOn:
+        qDebug()<<"New Login : " <<newMessage.message;
+        break;
+    default:
+        break;
+    }
+    //mSocket->write(Data);
 }
 
 void ChatConnection::disconnected()

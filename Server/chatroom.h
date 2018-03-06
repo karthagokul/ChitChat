@@ -13,6 +13,7 @@ public:
     ChatRoom(QObject *aParent);
     void createNewSession(qintptr socketSessionId);
     void closeAllSessions();
+    QStringList getBuddies();
 
 protected slots:
     void onClientDisConnection(const qintptr&sessionId);

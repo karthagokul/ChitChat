@@ -4,11 +4,12 @@
 #include <QThread>
 #include <QTcpSocket>
 
+class ChatRoom;
 class ChatConnection : public QThread
 {
     Q_OBJECT
 public:
-    explicit ChatConnection(qintptr aSocketID, QObject *aParent = 0);
+    explicit ChatConnection(const ChatRoom *aRoom,qintptr aSocketID, QObject *aParent = 0);
     virtual ~ChatConnection();
     void run();
 
@@ -23,8 +24,10 @@ public slots:
     void disconnected();
 
 private:
+    QString mName;
     QTcpSocket *mSocket;
     qintptr mSocketDescriptor;
+    const ChatRoom *mChatRoom;
 };
 
 #endif // CHATCONNECTION_H

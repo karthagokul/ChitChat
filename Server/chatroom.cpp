@@ -1,8 +1,14 @@
 #include "chatroom.h"
 #include "chatconnection.h"
+#include "messagehandler.h"
 
 ChatRoom::ChatRoom(QObject *aParent)
     :QObject(aParent)
+{
+
+}
+
+QStringList ChatRoom::getBuddies()
 {
 
 }
@@ -32,7 +38,7 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
 void ChatRoom::createNewSession(qintptr socketSessionId)
 {
     // Every new connection will be run in a newly created thread
-    ChatConnection *newClient = new ChatConnection(socketSessionId, this);
+    ChatConnection *newClient = new ChatConnection(this,socketSessionId, this);
     // connect signal/slot
     // once a thread is not needed, it will be beleted later
     connect(newClient, SIGNAL(finished()), newClient, SLOT(deleteLater()));

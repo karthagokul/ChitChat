@@ -3,6 +3,7 @@ QT +=network
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
+INCLUDEPATH+=../common
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -20,11 +21,11 @@ SOURCES += main.cpp \
     chatconnection.cpp \
     serverapplication.cpp \
     chatroom.cpp \
-    messagehandler.cpp
+    ../common/messagehandler.cpp
 
 HEADERS += \
     server.h \
     chatconnection.h \
     serverapplication.h \
     chatroom.h \
-    messagehandler.h
+    ../common/messagehandler.h
