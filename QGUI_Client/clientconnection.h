@@ -30,7 +30,7 @@ private:
 
 signals:
     void stateChanged();
-    void buddylist();
+    void buddylist(QString aMessage);
     //need to change the below logic
     void newMessage(QString message,QString sender);
     void error(QString aMessage);

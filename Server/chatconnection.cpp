@@ -3,7 +3,6 @@
 #include "chatroom.h"
 #include <QtNetwork>
 
-
 ChatConnection::ChatConnection(qintptr aSocketID, QObject *aParent) :
     QThread(aParent)
 {
@@ -12,18 +11,13 @@ ChatConnection::ChatConnection(qintptr aSocketID, QObject *aParent) :
 
 ChatConnection:: ~ChatConnection()
 {
-    qDebug()<<"Closing Client";
-
+//    qDebug()<<"Closing Client";
 }
 
 void ChatConnection::run()
 {
-    // thread starts here
-    qDebug() << " Thread started";
-
     mSocket = new QTcpSocket();
-
-    // set the ID
+   // set the ID
     if(!mSocket->setSocketDescriptor(this->mSocketDescriptor))
     {
         // something's wrong, we just emit a signal
@@ -31,36 +25,27 @@ void ChatConnection::run()
         return;
     }
 
-    // connect socket and signal
-    // note - Qt::DirectConnection is used because it's multithreaded
-    //        This makes the slot to be invoked immediately, when the signal is emitted.
-
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
-    // We'll have multiple clients, we want to know which is which
-    qDebug() << mSocketDescriptor << " Client connected";
+  //  qDebug() << mSocketDescriptor << " Client connected";
 
-    // make this thread a loop,
-    // thread will stay alive so that signal/slot to function properly
-    // not dropped out in the middle when thread dies
-
-    exec();
+     exec();
 }
 
 void ChatConnection::readyRead()
 {
-    Message newMessage=newMessage.parseFromClient(mSocket->readAll());
-    switch (newMessage.type) {
-    case Invalid:
+    Message newMessage(mSocket->readAll());
+    switch (newMessage.type()) {
+    case Message::Invalid:
         qDebug()<<"Unsupported Message Type";
         break;
-    case LogOn:
-        qDebug()<<"New Login : " <<newMessage.message;
-        mName=newMessage.message;
+    case Message::LogOn:
+        qDebug()<<"New Login : " <<newMessage.message();
+        mName=newMessage.sender();
         emit loggedin(newMessage,mSocketDescriptor);
         break;
-    case Chat:
+    case Message::Chat:
         emit newmessage(newMessage,mSocketDescriptor);
         break;
     default:

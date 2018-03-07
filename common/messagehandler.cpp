@@ -1,11 +1,9 @@
 #include "messagehandler.h"
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+
 #include <QDebug>
 
 Message::Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies)
-    :mType(aType),mSender(aSender),mMessage(aMessage),mBuddies(aBuddies)
+    :mType(aType),mBuddies(aBuddies),mSender(aSender),mMessage(aMessage)
 {
 
 }
@@ -23,12 +21,110 @@ Message::Message(const Message &aMessage)
     this->mBuddies=aMessage.buddies();
 }
 
-Message::Message(const QByteArray &aData)
+bool Message::jsonObjectToStringList(QJsonObject &aObject,QString aID,QStringList &aStringList)
 {
-
+    if(!aObject.contains(aID))
+    {
+        return false;
+    }
+    //Clear Existing List If Any
+    aStringList.clear();
+    QVariantList varList=aObject[aID].toArray().toVariantList();
+    for (QVariantList::iterator j = varList.begin(); j != varList.end(); j++)
+    {
+        aStringList<< (*j).toString();
+    }
+    return true;
 }
 
-QByteArray Message::toByteArray()
+bool Message::jsonObjectToString(QJsonObject &aObject,QString aID,QString &aString)
+{
+    if(!aObject.contains(aID))
+    {
+        return false;
+    }
+    aString=aObject[aID].toString();
+    return true;
+}
+
+Message::Message(const QByteArray &aData)
+{
+    QJsonDocument d = QJsonDocument::fromBinaryData(aData);
+    if(d.isNull())
+    {
+        qCritical()<<"Unable to Parse the Protocol";
+        mType=Invalid;
+    }
+    QJsonObject dataObject = d.object();
+    QString command;
+    if(!jsonObjectToString(dataObject,COMMAND,command))
+    {
+        qCritical()<<"Unable to Parse the Protocol";
+        mType=Invalid;
+    }
+
+    if(command==COMMAND_LOGON)
+    {
+        mType=LogOn;
+        if(!jsonObjectToString(dataObject,SENDER,mSender))
+        {
+            qCritical()<<COMMAND_CHAT<<":Parse Error";
+            mType=Invalid;
+        }
+    }
+    else if(command==COMMAND_CHAT)
+    {
+        mType=Chat;
+        if(!jsonObjectToString(dataObject,MESSAGE,mMessage)||\
+                !jsonObjectToString(dataObject,SENDER,mSender))
+        {
+            qCritical()<<COMMAND_CHAT<<":Parse Error";
+            mType=Invalid;
+        }
+    }
+    else if(command==COMMAND_LOGOFF)
+    {
+        mType=LogOff;
+        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
+        {
+            qCritical()<<COMMAND_LOGOFF<<":Parse Error";
+            mType=Invalid;
+        }
+        //Optional
+        jsonObjectToString(dataObject,MESSAGE,mMessage);
+        qDebug()<<"Yes You got it :"<<mMessage;
+    }
+    else if(command==COMMAND_MENTION)
+    {
+        mType=Mention;
+        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies)|| \
+                !jsonObjectToString(dataObject,MESSAGE,mMessage)||\
+                !jsonObjectToString(dataObject,SENDER,mSender))
+        {
+            qCritical()<<COMMAND_MENTION<<":Parse Error";
+            mType=Invalid;
+        }
+    }
+    else if(command==COMMAND_ONLINE)
+    {
+        mType=Online;
+        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
+        {
+            qCritical()<<COMMAND_ONLINE<<":Parse Error";
+            mType=Invalid;
+            //Optional
+            jsonObjectToString(dataObject,MESSAGE,mMessage);
+            jsonObjectToString(dataObject,SENDER,mSender);
+        }
+    }
+    else
+    {
+        qCritical()<<"Unknown Protocol";
+        mType=Invalid;
+    }
+}
+
+QByteArray Message::toByteArray() const
 {
     QJsonDocument d = QJsonDocument::fromJson(QString("{}").toUtf8());
     if(d.isNull())
@@ -43,169 +139,40 @@ QByteArray Message::toByteArray()
     {
     case LogOn:
         rootobj[COMMAND]=COMMAND_LOGON;
+        rootobj[SENDER]=mSender;
+        rootobj[MESSAGE]=mMessage;
         break;
     case Chat:
         rootobj[COMMAND]=COMMAND_CHAT;
+        rootobj[MESSAGE]=mMessage;
+        rootobj[SENDER]=mSender;
         break;
     case Mention:
         rootobj[COMMAND]=COMMAND_MENTION;
+        rootobj[MESSAGE]=mMessage;
+        rootobj[SENDER]=mSender;
+        rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     case Online:
         rootobj[COMMAND]=COMMAND_ONLINE;
+        rootobj[MESSAGE]=mMessage; //Optional Message , like a reason
+        rootobj[SENDER]=mSender;
+        rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     case LogOff:
         rootobj[COMMAND]=COMMAND_LOGOFF;
+        rootobj[SENDER]=mSender;
+        rootobj[MESSAGE]=mMessage;
+        //qDebug()<<"See, You get it:"<<mSender<<mMessage;
+        rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     default: //Whatever else should be rejected
         //Empty case
-         QByteArray();
+        qCritical()<<"Invalid Protocol! You should not see this message !";
+        return QByteArray();
         break;
     }
 
-    if(mType==LogOn)
-    {
-        rootobj[LOGON]=QJsonArray();
-        rootobj[MESSAGE]=mMessage;
-
-    }
-    else if(mType==Online)
-    {
-        rootobj[ONLINE]=QJsonArray::fromStringList(mBuddies);
-    }
-    else if(mType==Chat)
-    {
-        rootobj[MESSAGE]=mMessage;
-        rootobj[SENDER]=mMessage;
-    }
     d.setObject(rootobj);
     return d.toBinaryData();
 }
-
-
-/*
-Message MessageHandler::parseMessageFromClient(const QByteArray &aData)
-{
-    Message m;
-    QJsonDocument d = QJsonDocument::fromBinaryData(aData);
-    if(d.isNull())
-    {
-        m.type=Invalid;
-        return m;
-    }
-    QJsonObject dataObject = d.object();
-    if(dataObject.contains(LOGON))
-    {
-        m.type=LogOn;
-        if(dataObject.contains(MESSAGE))
-        {
-            m.message=dataObject[MESSAGE].toString();
-        }
-        else
-        {
-            qCritical()<<"Wrong Format";
-        }
-    }
-    else
-    {
-         m.type=Chat;
-         if(dataObject.contains(MESSAGE))
-         {
-             m.message=dataObject[MESSAGE].toString();
-             if(dataObject.contains(SENDER))
-             {
-                m.sender=dataObject[SENDER].toString();
-             }
-             else
-             {
-                 qCritical()<<"Invalid Protocol:Message Must be send from a user";
-                 m.type=Invalid;
-             }
-             if(dataObject.contains(BUDDIES))
-             {
-                 //we need to change type to mention
-                 //This message is for few specific ones
-             }
-             else
-             {
-                 //Broadcast
-             }
-         }
-         else
-         {
-             qCritical()<<"Wrong Format";
-             m.type=Invalid;
-         }
-    }
-    return m;
-}
-
-Message MessageHandler::parseMessageFromServer(const QByteArray &aData)
-{
-    Message m;
-    QJsonDocument d = QJsonDocument::fromBinaryData(aData);
-    if(d.isNull())
-    {
-        m.type=Invalid;
-        return m;
-    }
-    QJsonObject dataObject = d.object();
-    if(dataObject.contains(ONLINE))
-    {
-        //qDebug()<<"Got Online Status";
-        QJsonArray onlinearay=dataObject[ONLINE].toArray();
-        QVariantList buddies=onlinearay.toVariantList();
-        for (QVariantList::iterator j = buddies.begin(); j != buddies.end(); j++)
-        {
-            //qDebug() << "iterating through QVariantList ";
-            //qDebug() << (*j).toString(); // Print QVariant
-            m.buddies<< (*j).toString();
-        }
-        m.type=Online;
-    }
-    else if(dataObject.contains(MESSAGE))
-    {
-        m.type=Chat;
-        m.message=dataObject[MESSAGE].toString();
-        if(dataObject.contains(SENDER))
-        {
-           m.sender=dataObject[SENDER].toString();
-           qDebug()<<m.message;
-        }
-        else
-        {
-            qCritical()<<"Invalid Protocol:Message Must be send from a user";
-            m.type=Invalid;
-        }
-    }
-    return m;
-}
-
-QByteArray MessageHandler::createMessage(const Message &aMessage)
-{
-    QJsonDocument d = QJsonDocument::fromJson(QString("{}").toUtf8());
-    if(d.isNull())
-    {
-       qCritical()<<"System Error , Unable to create Message";
-       return QByteArray();
-    }
-    QJsonObject rootobj;
-    if(aMessage.type==LogOn)
-    {
-        rootobj[LOGON]=QJsonArray();
-        rootobj[MESSAGE]=aMessage.message;
-
-    }
-    else if(aMessage.type==Online)
-    {
-        rootobj[ONLINE]=QJsonArray::fromStringList(aMessage.buddies);
-    }
-    else if(aMessage.type==Chat)
-    {
-        rootobj[MESSAGE]=aMessage.message;
-        rootobj[SENDER]=aMessage.sender;
-    }
-    d.setObject(rootobj);
-    return d.toBinaryData();
-}
-
-*/

@@ -14,7 +14,7 @@ Widget::Widget(QWidget *parent) :
     connect(mUi->logonButton,SIGNAL(clicked(bool)),this,SLOT(onLogonButtonClick()));
     connect(mUi->sendButton,SIGNAL(clicked(bool)),this,SLOT(onSendButtonClick()));
     connect(mConnection,SIGNAL(stateChanged()),this,SLOT(onSessionStateChanged()));
-    connect(mConnection,SIGNAL(buddylist()),this,SLOT(onBuddyList()));
+    connect(mConnection,SIGNAL(buddylist(QString)),this,SLOT(onBuddyList(QString)));
     connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
     connect(mConnection,SIGNAL(error(QString)),this,SLOT(onError(QString)));
 }
@@ -28,9 +28,13 @@ void Widget::showLoginDialog()
 
 void Widget::onLogonButtonClick()
 {
-    qDebug()<<"Clicked";
     if(mConnection->isActive())
+    {
         mConnection->stop();
+        //Clear the List of Users
+        mBuddyListModel.setStringList(QStringList());
+        mUi->buddyListView->setModel(&mBuddyListModel);
+    }
     else
         mConnection->start();
 }
@@ -46,7 +50,7 @@ void Widget::onSessionStateChanged()
     else
     {
         mUi->logonButton->setText("Log On");
-        onBuddyList();
+       // onBuddyList();
     }
 }
 
@@ -55,10 +59,11 @@ void Widget::onSetServerData(QString aHostIp ,QString aPort,QString aAvatarName)
     mConnection->setServer(aHostIp,aPort.toInt());
     mConnection->setUserName(aAvatarName);
 }
-void Widget::onBuddyList()
+void Widget::onBuddyList(QString aMessage)
 {
     mBuddyListModel.setStringList(mConnection->buddies());
     mUi->buddyListView->setModel(&mBuddyListModel);
+    mUi->chatView->append(aMessage);
 }
 
 void  Widget::onSendButtonClick()

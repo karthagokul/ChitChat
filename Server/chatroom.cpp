@@ -12,22 +12,19 @@ ChatRoom::ChatRoom(QObject *aParent)
 
 void ChatRoom::onLogon(const Message &aMessage,const qintptr&sessionId)
 {
-    qDebug()<<"Got Logon ";
-    Message onlinelist;
-    onlinelist.type=Online;
-    onlinelist.buddies=getBuddies(sessionId);
+    // qDebug()<<"Got Logon ";
+    Message onlinelist(Message::Online,QString(aMessage.sender()),QString("Logged in!"),getBuddies(sessionId));
     broadcastMessage(onlinelist,-1);
 }
 
 void  ChatRoom::broadcastMessage(const Message &aMessage,const qintptr&sessionId)
 {
-    MessageHandler mHandler;
     QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
         if(i.key()!=sessionId)
         {
-            i.value()->write(mHandler.createMessage(aMessage));
+            i.value()->write(aMessage.toByteArray());
         }
     }
 }
@@ -50,13 +47,7 @@ QStringList ChatRoom::getBuddies(const qintptr&sessionId)
             buddies<<i.value()->name();
         }
     }
-    qDebug()<<"Online Buddies"<<buddies;
-
-    /*
-     *
-
-    */
-
+    // qDebug()<<"Online Buddies"<<buddies;
     return buddies;
 }
 
@@ -82,27 +73,9 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
         }
     }
 
-    //InformingOthers
-    //Send a Custom Message which is visible on chat window
-    Message signOffNotification;
-    signOffNotification.type=Chat;
-    signOffNotification.sender="Server Bot";
-    signOffNotification.message=signOffUser+"Left Room !";
-    qDebug()<<signOffUser+"Left Room !";
-    broadcastMessage(signOffNotification,-1);
-
-    //Update the client list
-    Message onlinelist;
-    onlinelist.type=Online;
-    onlinelist.buddies=getBuddies(sessionId);
-    broadcastMessage(onlinelist,-1);
-
-
-
-
-
-
-    //qDebug()<<"total clients"<<mOnlineClients.count();
+    Message logOffMessage(Message::LogOff,QString(),signOffUser+QString(" Left the Room"),\
+                          getBuddies(sessionId));
+    broadcastMessage(logOffMessage);
 }
 
 void ChatRoom::createNewSession(const qintptr socketSessionId)

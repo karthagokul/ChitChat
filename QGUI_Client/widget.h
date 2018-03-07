@@ -24,7 +24,7 @@ protected slots:
     void onSetServerData(QString aHostIp ,QString aPort,QString aAvatarName);
     void onLogonButtonClick();
     void onSessionStateChanged();
-    void onBuddyList();
+    void onBuddyList(QString);
     void onNewMessage(QString aMessage,QString aSender);
     void onSendButtonClick();
     void onError(QString aMessage);

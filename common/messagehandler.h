@@ -3,6 +3,9 @@
 
 #include <QStringList>
 #include <QObject>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 /* Various Types of Commands to Operate between Server and Client*/
 #define COMMAND "command"
@@ -13,7 +16,7 @@
 #define COMMAND_LOGOFF "logff"
 
 #define VERSION "version"
-#define ONLINE "online"
+#define BUDDIES "buddies"
 #define MESSAGE "message"
 #define SENDER "sender"
 
@@ -26,12 +29,16 @@ private:
     QStringList mBuddies;
     QString mSender;
     QString mMessage;
+public:
     Message();
     Message(const Message &aMessage);
-public:
     Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies);
     Message(const QByteArray &aData);
-    QByteArray toByteArray();
+    QByteArray toByteArray() const;
+
+private:
+    bool jsonObjectToStringList(QJsonObject &aObject,QString aID,QStringList &aStringList);
+    bool jsonObjectToString(QJsonObject &aObject,QString aID,QString &aString);
 
 public:
     QStringList buddies() const
@@ -59,13 +66,13 @@ Login: FromClient
 {command:"logon","version": 1.0 }
 
 Buddies: FromServer
-{command:"online","online": ["Thomas","Salvatore","Farhan"],"version": 1.0 }
+{command:"online","buddies": ["Thomas","Salvatore","Farhan"],"version": 1.0 }
 
 Message Broadcast: Client to Server
 {command:"chat",sender:"Gokul",message: "Welcome"}
 
 Message to Specific Users
-{command:"mention",sender:"Gokul",message: "Welcome","mention":["Thomas","Salvatore","Farhan"]}
+{command:"mention",sender:"Gokul",message: "Welcome","buddies":["Thomas","Salvatore","Farhan"]}
 
 Message Broadcast: Client to Server
 {command:"logoff",sender:"Gokul",message: "Bye"}

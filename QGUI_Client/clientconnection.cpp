@@ -25,13 +25,8 @@ void ClientConnection::onConnected()
 {
     qDebug()<<"Connected";
     mActive=true;
-
-    Message loginmessage;
-    loginmessage.type=LogOn;
-    loginmessage.message=mName;
-    MessageHandler  m;
-    QByteArray array=m.createMessage(loginmessage);
-    mSocket->write(array);
+    Message loginmessage(Message::LogOn,mName,QString(),QStringList());
+    mSocket->write(loginmessage.toByteArray());
     emit stateChanged();
 }
 
@@ -94,26 +89,30 @@ void ClientConnection::onRead()
     //QByteArray dataBytes = mSocket->readAll();
     //QString data=QString::fromStdString(dataBytes.toStdString());
     //qDebug()  << " Server Says: " << data;
-    MessageHandler mH;
-    Message readmessage=mH.parseMessageFromServer(mSocket->readAll());
-    switch (readmessage.type) {
-    case Invalid:
+    Message readmessage(mSocket->readAll());
+    switch (readmessage.type()) {
+    case Message::Invalid:
         qDebug()<<"Unsupported Message Type";
         break;
-    case Online:
-        qDebug()<<"Got Buddies: " <<readmessage.buddies;
-        mBuddies=readmessage.buddies;
-        emit buddylist();
+    case Message::Online:
+        qDebug()<<"Got Buddies: " <<readmessage.buddies()<<":"<<readmessage.message();
+        mBuddies=readmessage.buddies();
+        emit buddylist(readmessage.message());
         break;
-    case Chat:
-        qDebug()<<readmessage.sender<<":"<<readmessage.message;
-        if(readmessage.sender==mName)
+    case Message::LogOff:
+        qDebug()<<"Got Buddies: " <<readmessage.buddies()<<":"<<readmessage.message();
+        mBuddies=readmessage.buddies();
+        emit buddylist(readmessage.message());
+        break;
+    case Message::Chat:
+        qDebug()<<readmessage.sender()<<":"<<readmessage.message();
+        if(readmessage.sender()==mName)
         {
-            emit newMessage(readmessage.message,"You");
+            emit newMessage(readmessage.message(),"You");
         }
         else
         {
-            emit newMessage(readmessage.message,readmessage.sender);
+            emit newMessage(readmessage.message(),readmessage.sender());
         }
     default:
         break;
@@ -130,13 +129,8 @@ void ClientConnection::send(QString &aData)
     }
     qDebug()<<"Sending";
     //ToDo , Check if there are user mention, if so , do act
-    Message newMessage;
-    newMessage.type=Chat;
-    newMessage.message=aData;
-    newMessage.sender=mName;
-    MessageHandler mH;
-    QByteArray data=mH.createMessage(newMessage);
-    mSocket->write(data);
+    Message newMessage(Message::Chat,mName,aData,QStringList());
+    mSocket->write(newMessage.toByteArray());
 }
 
 ClientConnection::~ClientConnection()
