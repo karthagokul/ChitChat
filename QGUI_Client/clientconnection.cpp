@@ -23,7 +23,6 @@ void ClientConnection::setUserName(QString aName)
 
 void ClientConnection::onConnected()
 {
-    qDebug()<<"Connected";
     mActive=true;
     Message loginmessage(Message::LogOn,mName,QString(),QStringList());
     mSocket->write(loginmessage.toByteArray());
@@ -32,7 +31,6 @@ void ClientConnection::onConnected()
 
 void ClientConnection::onDisconnected()
 {
-    qDebug()<<"Disconnected";
     mActive=false;
     emit stateChanged();
 }
@@ -44,7 +42,6 @@ void ClientConnection::start()
         qDebug()<<"Already Have an Active Session";
         return;
     }
-    qDebug()<<"Connecting to "<<mHostIp<<":"<<mPort;
     mSocket->connectToHost(mHostIp,mPort);
 }
 
@@ -85,27 +82,21 @@ void ClientConnection::stop()
 
 void ClientConnection::onRead()
 {
-    qDebug()<<"Reading";
-    //QByteArray dataBytes = mSocket->readAll();
-    //QString data=QString::fromStdString(dataBytes.toStdString());
-    //qDebug()  << " Server Says: " << data;
     Message readmessage(mSocket->readAll());
     switch (readmessage.type()) {
     case Message::Invalid:
         qDebug()<<"Unsupported Message Type";
         break;
     case Message::Online:
-        qDebug()<<"Got Buddies: " <<readmessage.buddies()<<":"<<readmessage.message();
         mBuddies=readmessage.buddies();
         emit buddylist(readmessage.message());
         break;
     case Message::LogOff:
-        qDebug()<<"Got Buddies: " <<readmessage.buddies()<<":"<<readmessage.message();
+        //Log off Notification from Other Client, Lets update the latest buddies
         mBuddies=readmessage.buddies();
         emit buddylist(readmessage.message());
         break;
     case Message::Chat:
-        qDebug()<<readmessage.sender()<<":"<<readmessage.message();
         if(readmessage.sender()==mName)
         {
             emit newMessage(readmessage.message(),"You");
@@ -127,8 +118,6 @@ void ClientConnection::send(QString &aData)
         qCritical()<<"No Active Connection to send Message";
         return;
     }
-    qDebug()<<"Sending";
-    //ToDo , Check if there are user mention, if so , do act
     Message newMessage(Message::Chat,mName,aData,QStringList());
     mSocket->write(newMessage.toByteArray());
 }

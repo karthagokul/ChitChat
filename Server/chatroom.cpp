@@ -13,7 +13,7 @@ ChatRoom::ChatRoom(QObject *aParent)
 void ChatRoom::onLogon(const Message &aMessage,const qintptr&sessionId)
 {
     // qDebug()<<"Got Logon ";
-    Message onlinelist(Message::Online,QString(aMessage.sender()),QString("Logged in!"),getBuddies(sessionId));
+    Message onlinelist(Message::Online,QString(),aMessage.sender()+QString("Logged in!"),getBuddies(sessionId));
     broadcastMessage(onlinelist,-1);
 }
 

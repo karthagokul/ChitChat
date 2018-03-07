@@ -10,7 +10,10 @@ Message::Message(MessageType aType,QString aSender,QString aMessage,QStringList 
 
 Message::Message()
 {
-    qDebug()<<"Disabling the Empty Data Creation";
+    mType=Message.Invalid;
+    mBuddies=QStringList();
+    mMessage=QString();
+    mSender=QString();
 }
 
 Message::Message(const Message &aMessage)
@@ -90,9 +93,7 @@ Message::Message(const QByteArray &aData)
             qCritical()<<COMMAND_LOGOFF<<":Parse Error";
             mType=Invalid;
         }
-        //Optional
         jsonObjectToString(dataObject,MESSAGE,mMessage);
-        qDebug()<<"Yes You got it :"<<mMessage;
     }
     else if(command==COMMAND_MENTION)
     {
@@ -112,10 +113,8 @@ Message::Message(const QByteArray &aData)
         {
             qCritical()<<COMMAND_ONLINE<<":Parse Error";
             mType=Invalid;
-            //Optional
-            jsonObjectToString(dataObject,MESSAGE,mMessage);
-            jsonObjectToString(dataObject,SENDER,mSender);
         }
+        jsonObjectToString(dataObject,MESSAGE,mMessage);
     }
     else
     {
@@ -163,7 +162,6 @@ QByteArray Message::toByteArray() const
         rootobj[COMMAND]=COMMAND_LOGOFF;
         rootobj[SENDER]=mSender;
         rootobj[MESSAGE]=mMessage;
-        //qDebug()<<"See, You get it:"<<mSender<<mMessage;
         rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     default: //Whatever else should be rejected
@@ -172,7 +170,6 @@ QByteArray Message::toByteArray() const
         return QByteArray();
         break;
     }
-
     d.setObject(rootobj);
     return d.toBinaryData();
 }

@@ -36,21 +36,22 @@ void Widget::onLogonButtonClick()
         mUi->buddyListView->setModel(&mBuddyListModel);
     }
     else
+    {
         mConnection->start();
+    }
 }
-
 
 void Widget::onSessionStateChanged()
 {
-    qDebug()<<"Session State Changed";
     if(mConnection->isActive())
     {
         mUi->logonButton->setText("Log Off");
+        mUi->sendButton->setEnabled(true);
     }
     else
     {
         mUi->logonButton->setText("Log On");
-       // onBuddyList();
+        mUi->sendButton->setEnabled(false);
     }
 }
 
@@ -59,6 +60,7 @@ void Widget::onSetServerData(QString aHostIp ,QString aPort,QString aAvatarName)
     mConnection->setServer(aHostIp,aPort.toInt());
     mConnection->setUserName(aAvatarName);
 }
+
 void Widget::onBuddyList(QString aMessage)
 {
     mBuddyListModel.setStringList(mConnection->buddies());
@@ -79,6 +81,7 @@ void Widget::onNewMessage(QString aMessage,QString aSender)
     mUi->chatView->append(aSender+":"+aMessage);
 
 }
+
 void Widget::onError(QString aMessage)
 {
     mUi->chatView->append("Error:"+aMessage);
