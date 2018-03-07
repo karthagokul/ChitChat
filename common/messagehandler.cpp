@@ -51,7 +51,8 @@ bool Message::jsonObjectToString(QJsonObject &aObject,QString aID,QString &aStri
 
 Message::Message(const QByteArray &aData)
 {
-    QJsonDocument d = QJsonDocument::fromBinaryData(aData);
+    qDebug()<<QString::fromUtf8(aData);
+    QJsonDocument d = QJsonDocument::fromJson(aData);
     if(d.isNull())
     {
         qCritical()<<"Unable to Parse the Protocol";
@@ -73,6 +74,7 @@ Message::Message(const QByteArray &aData)
             qCritical()<<COMMAND_CHAT<<":Parse Error";
             mType=Invalid;
         }
+        qDebug()<<"Sender is "<<mSender;
     }
     else if(command==COMMAND_CHAT)
     {
@@ -168,5 +170,5 @@ QByteArray Message::toByteArray() const
         break;
     }
     d.setObject(rootobj);
-    return d.toBinaryData();
+    return d.toJson();
 }

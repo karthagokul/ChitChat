@@ -5,14 +5,22 @@
 #include <QMap>
 #include <QTcpServer>
 
+#ifdef ENABLE_WEBSOCKETS
+#include <QtWebSockets>
+#endif
+
 class ChatRoom;
 
-const int server_port=8080;
+const int tcp_port=8080;
+
+#ifdef ENABLE_WEBSOCKETS
+const int web_port=9090;
+#endif
 
 /*!
  * \brief The Server class
  */
-class Server:public QTcpServer
+class Server:public QObject
 {
     Q_OBJECT
 public:
@@ -28,10 +36,18 @@ public:
      */
     virtual ~Server();
 
-    void incomingConnection(qintptr socketDescriptor);
-
+protected slots:
+    void onNewTCPConnection();
+#ifdef ENABLE_WEBSOCKETS
+    void onNewWebConnection();
+#endif
 private:
     ChatRoom *mChatRoom;
+    QTcpServer *mSocketServer;
+#ifdef ENABLE_WEBSOCKETS
+    QWebSocketServer *mWebSocketServer;
+#endif
+
 };
 
 #endif // SERVER_H

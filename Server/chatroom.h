@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include "messagehandler.h"
-class ChatConnection;
+class ChatSession;
 
 /*!
  * \brief The ChatRoom class
@@ -14,18 +14,18 @@ class ChatRoom :public QObject
     Q_OBJECT
 public:
     ChatRoom(QObject *aParent);
-    void createNewSession(const qintptr socketSessionId);
+    void registerSession(ChatSession *session);
     void closeAllSessions();
 private:
-    QStringList getBuddies(const qintptr&sessionId);
+    QStringList getBuddies(const QString &sessionId);
 protected slots:
-    void onClientDisConnection(const qintptr&sessionId);
-    void onLogon(const Message &aMessage,const qintptr&sessionId);
-    void onMessageRequest(const Message &aMessage,const qintptr&sessionId);
+    void onClientDisConnection(const QString&sessionId);
+    void onLogon(const Message &aMessage,const QString&sessionId);
+    void onMessageRequest(const Message &aMessage,const QString&sessionId);
 private:
-    void broadcastMessage(const Message &aMessage,const qintptr&sessionId=-1);
+    void broadcastMessage(const Message &aMessage,const QString&sessionId=QString());
 private:
-    QMap<qintptr,ChatConnection*> mOnlineClients;
+    QMap<QString,ChatSession*> mOnlineClients;
 };
 
 #endif // CHATROOM_H

@@ -45,3 +45,23 @@ a:hover { text-decoration:underline; }
     border:1px solid #ACD8F0; }
 
 #submit { width: 60px; }
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    border: 1px solid #ddd;
+    float: right;
+}
+ul lh{
+	font-weight: bold;
+	padding: 2px 2px;
+    border-bottom: 3px solid #ddd;
+}
+ul li {
+    padding: 8px 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+ul li:last-child {
+    border-bottom: none
+}

@@ -1,5 +1,14 @@
 QT -= gui
+
+CONFIG+=websocketsupport
+websocketsupport {
+    message("The Project has been enabled for websocket support")
+    QT+=websockets
+    DEFINES+=ENABLE_WEBSOCKETS
+}
 QT +=network
+
+message(Libraries: $$[QT_INSTALL_LIBS])
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -18,14 +27,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     server.cpp \
-    chatconnection.cpp \
     serverapplication.cpp \
     chatroom.cpp \
-    ../common/messagehandler.cpp
+    ../common/messagehandler.cpp \
+    chatsession.cpp
 
 HEADERS += \
     server.h \
-    chatconnection.h \
     serverapplication.h \
     chatroom.h \
-    ../common/messagehandler.h
+    ../common/messagehandler.h \
+    chatsession.h

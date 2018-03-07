@@ -1,5 +1,5 @@
 #include "chatroom.h"
-#include "chatconnection.h"
+#include "chatsession.h"
 #include "messagehandler.h"
 
 
@@ -10,15 +10,15 @@ ChatRoom::ChatRoom(QObject *aParent)
     qRegisterMetaType< qintptr >("qintptr");
 }
 
-void ChatRoom::onLogon(const Message &aMessage,const qintptr&sessionId)
+void ChatRoom::onLogon(const Message &aMessage,const QString&sessionId)
 {
     Message onlinelist(Message::Online,QString(),aMessage.sender()+QString("Logged in!"),getBuddies(sessionId));
-    broadcastMessage(onlinelist,-1);
+    broadcastMessage(onlinelist,QString());
 }
 
-void  ChatRoom::broadcastMessage(const Message &aMessage,const qintptr&sessionId)
+void  ChatRoom::broadcastMessage(const Message &aMessage,const QString&sessionId)
 {
-    QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
+    QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
         if(i.key()!=sessionId)
@@ -28,15 +28,15 @@ void  ChatRoom::broadcastMessage(const Message &aMessage,const qintptr&sessionId
     }
 }
 
-void ChatRoom::onMessageRequest(const Message &aMessage,const qintptr&sessionId)
+void ChatRoom::onMessageRequest(const Message &aMessage,const QString&sessionId)
 {
-    broadcastMessage(aMessage,-1);
+    broadcastMessage(aMessage,QString());
 }
 
-QStringList ChatRoom::getBuddies(const qintptr&sessionId)
+QStringList ChatRoom::getBuddies(const QString&sessionId)
 {
     QStringList buddies;
-    QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
+    QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
         //We do not need to send own id to him
@@ -54,11 +54,11 @@ void ChatRoom::closeAllSessions()
 
 }
 
-void ChatRoom::onClientDisConnection(const qintptr&sessionId)
+void ChatRoom::onClientDisConnection(const QString&sessionId)
 {
     //Lets Remove the Online Client from Chatroom
     QString signOffUser;
-    QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
+    QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
         if(i.key()==sessionId)
@@ -73,17 +73,17 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
     broadcastMessage(logOffMessage);
 }
 
-void ChatRoom::createNewSession(const qintptr socketSessionId)
+void ChatRoom::registerSession(ChatSession *session)
 {
-    // Every new connection will be run in a newly created thread
-    ChatConnection *newClient = new ChatConnection(socketSessionId, this);
+    ChatSession *newClient = session;
     // connect signal/slot
     // once a thread is not needed, it will be beleted later
     connect(newClient, SIGNAL(finished()), newClient, SLOT(deleteLater()));
-    connect(newClient,SIGNAL(disconnecting(qintptr)),this,SLOT(onClientDisConnection(qintptr)));
-    connect(newClient,SIGNAL(loggedin(Message,qintptr)),this,SLOT(onLogon(Message,qintptr)));
-    connect(newClient,SIGNAL(newmessage(Message,qintptr)),this,SLOT(onMessageRequest(Message,qintptr)));
+    connect(newClient,SIGNAL(disconnecting(QString)),this,SLOT(onClientDisConnection(QString)));
+    connect(newClient,SIGNAL(loggedin(Message,QString)),this,SLOT(onLogon(Message,QString)));
+    connect(newClient,SIGNAL(newmessage(Message,QString)),this,SLOT(onMessageRequest(Message,QString)));
     //Lets Insert to Online map
-    mOnlineClients.insert(socketSessionId,newClient);
+    mOnlineClients.insert(newClient->id(),newClient);
+    qDebug()<<"Total Clients Online"<<mOnlineClients.count();
     newClient->start();
 }
