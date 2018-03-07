@@ -50,9 +50,7 @@ void ChatConnection::run()
 
 void ChatConnection::readyRead()
 {
-
-    MessageHandler messageHandle;
-    Message newMessage=messageHandle.parseMessageFromClient(mSocket->readAll());
+    Message newMessage=newMessage.parseFromClient(mSocket->readAll());
     switch (newMessage.type) {
     case Invalid:
         qDebug()<<"Unsupported Message Type";

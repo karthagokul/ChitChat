@@ -4,43 +4,85 @@
 #include <QJsonArray>
 #include <QDebug>
 
+Message::Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies)
+    :mType(aType),mSender(aSender),mMessage(aMessage),mBuddies(aBuddies)
+{
+
+}
+
+Message::Message()
+{
+    qDebug()<<"Disabling the Empty Data Creation";
+}
+
+Message::Message(const Message &aMessage)
+{
+    this->mType=aMessage.type();
+    this->mMessage=aMessage.message();
+    this->mSender=aMessage.sender();
+    this->mBuddies=aMessage.buddies();
+}
+
+Message::Message(const QByteArray &aData)
+{
+
+}
+
+QByteArray Message::toByteArray()
+{
+    QJsonDocument d = QJsonDocument::fromJson(QString("{}").toUtf8());
+    if(d.isNull())
+    {
+        qCritical()<<"System Error , Unable to create Message";
+        return QByteArray();
+    }
+    QJsonObject rootobj;
+
+    //Invalid=1,Chat,Mention,Online,LogOn
+    switch(mType)
+    {
+    case LogOn:
+        rootobj[COMMAND]=COMMAND_LOGON;
+        break;
+    case Chat:
+        rootobj[COMMAND]=COMMAND_CHAT;
+        break;
+    case Mention:
+        rootobj[COMMAND]=COMMAND_MENTION;
+        break;
+    case Online:
+        rootobj[COMMAND]=COMMAND_ONLINE;
+        break;
+    case LogOff:
+        rootobj[COMMAND]=COMMAND_LOGOFF;
+        break;
+    default: //Whatever else should be rejected
+        //Empty case
+         QByteArray();
+        break;
+    }
+
+    if(mType==LogOn)
+    {
+        rootobj[LOGON]=QJsonArray();
+        rootobj[MESSAGE]=mMessage;
+
+    }
+    else if(mType==Online)
+    {
+        rootobj[ONLINE]=QJsonArray::fromStringList(mBuddies);
+    }
+    else if(mType==Chat)
+    {
+        rootobj[MESSAGE]=mMessage;
+        rootobj[SENDER]=mMessage;
+    }
+    d.setObject(rootobj);
+    return d.toBinaryData();
+}
+
+
 /*
- *
-
- Login Server
- {
-  "logon":[],
-  "version": 1.0
- }
-Buddy Information
-{
-  "online": [
-    "Thomas",
-    "Salvatore",
-    "Farhan"
-  ],
-  "version": 1.0
-}
-
-Message from Server to all clients
-{
-   buddy:"Gokul"
-   message: "Welcome"
-}
-
-Message to Server from Client
-{
-   message: "Welcome"
-}
-
-{
-   buddy: "Thomas"
-   message: "Welcome"
-}
-
-*/
-
-
 Message MessageHandler::parseMessageFromClient(const QByteArray &aData)
 {
     Message m;
@@ -165,3 +207,5 @@ QByteArray MessageHandler::createMessage(const Message &aMessage)
     d.setObject(rootobj);
     return d.toBinaryData();
 }
+
+*/
