@@ -6,6 +6,9 @@
 #include "messagehandler.h"
 class ChatConnection;
 
+/*!
+ * \brief The ChatRoom class
+ */
 class ChatRoom :public QObject
 {
     Q_OBJECT

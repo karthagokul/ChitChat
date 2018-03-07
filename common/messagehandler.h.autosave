@@ -20,15 +20,9 @@
 #define MESSAGE "message"
 #define SENDER "sender"
 
-/*!
- * \brief The Message class
- */
 class Message
 {
 public:
-    /*!
-     * \brief The MessageType enum
-     */
     enum MessageType{Invalid=1,Chat,Mention,Online,LogOn,LogOff};
 private:
     MessageType mType;
@@ -66,8 +60,7 @@ public:
 };
 
 
-/*
- * Gokul's ChitChat Protocol
+/* Gokul's ChitChat Protocol
 Login: FromClient
 {command:"logon","version": 1.0 }
 
@@ -84,5 +77,6 @@ Message Broadcast: Client to Server
 {command:"logoff",sender:"Gokul",message: "Bye"}
 
 */
+
 
 #endif // MESSAGEHANDLER_H

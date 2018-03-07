@@ -11,13 +11,13 @@ ChatConnection::ChatConnection(qintptr aSocketID, QObject *aParent) :
 
 ChatConnection:: ~ChatConnection()
 {
-//    qDebug()<<"Closing Client";
+    //    qDebug()<<"Closing Client";
 }
 
 void ChatConnection::run()
 {
     mSocket = new QTcpSocket();
-   // set the ID
+    // set the ID
     if(!mSocket->setSocketDescriptor(this->mSocketDescriptor))
     {
         // something's wrong, we just emit a signal
@@ -28,9 +28,9 @@ void ChatConnection::run()
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
-  //  qDebug() << mSocketDescriptor << " Client connected";
+    //  qDebug() << mSocketDescriptor << " Client connected";
 
-     exec();
+    exec();
 }
 
 void ChatConnection::readyRead()
@@ -49,24 +49,19 @@ void ChatConnection::readyRead()
         emit newmessage(newMessage,mSocketDescriptor);
         break;
     default:
-
         break;
     }
 }
 
 void ChatConnection::write(QByteArray aData)
 {
-    //Bug if you are calling this function two times immediately, todo
-    qDebug()<<"Sending";
     mSocket->write(aData);
     mSocket->waitForBytesWritten();
 }
 
-
 void ChatConnection::disconnected()
 {
     emit disconnecting(this->mSocketDescriptor);
-    qDebug() << mName << ":Disconnected";
     mSocket->deleteLater();
     exit(0);
 }

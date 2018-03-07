@@ -5,12 +5,11 @@
 Message::Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies)
     :mType(aType),mBuddies(aBuddies),mSender(aSender),mMessage(aMessage)
 {
-
 }
 
 Message::Message()
 {
-    mType=Message.Invalid;
+    mType=Message::Invalid;
     mBuddies=QStringList();
     mMessage=QString();
     mSender=QString();
@@ -132,8 +131,6 @@ QByteArray Message::toByteArray() const
         return QByteArray();
     }
     QJsonObject rootobj;
-
-    //Invalid=1,Chat,Mention,Online,LogOn
     switch(mType)
     {
     case LogOn:

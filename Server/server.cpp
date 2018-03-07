@@ -11,7 +11,6 @@ Server::Server(QObject *aParent)
 
 Server::~Server()
 {
-    qDebug()<<"Closing Sockets";
     mChatRoom->closeAllSessions();
     delete mChatRoom;
     mChatRoom=0;
@@ -27,14 +26,11 @@ bool Server::init()
     mChatRoom=new ChatRoom(this);
     listen(QHostAddress::Any,server_port);
     qDebug()<<"Server Has Been Started on "<<serverAddress()<<":"<<serverPort();
-
     return true;
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << socketDescriptor << " Connecting...";
     mChatRoom->createNewSession(socketDescriptor);
-
 }
 

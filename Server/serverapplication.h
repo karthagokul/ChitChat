@@ -5,6 +5,10 @@
 #include <QPointer>
 
 class Server;
+
+/*!
+ * \brief The ServerApplication class
+ */
 class ServerApplication:public QCoreApplication
 {
     Q_OBJECT

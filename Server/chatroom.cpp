@@ -12,7 +12,6 @@ ChatRoom::ChatRoom(QObject *aParent)
 
 void ChatRoom::onLogon(const Message &aMessage,const qintptr&sessionId)
 {
-    // qDebug()<<"Got Logon ";
     Message onlinelist(Message::Online,QString(),aMessage.sender()+QString("Logged in!"),getBuddies(sessionId));
     broadcastMessage(onlinelist,-1);
 }
@@ -47,7 +46,6 @@ QStringList ChatRoom::getBuddies(const qintptr&sessionId)
             buddies<<i.value()->name();
         }
     }
-    // qDebug()<<"Online Buddies"<<buddies;
     return buddies;
 }
 
@@ -58,8 +56,6 @@ void ChatRoom::closeAllSessions()
 
 void ChatRoom::onClientDisConnection(const qintptr&sessionId)
 {
-    //qDebug()<<"total clients"<<mOnlineClients.count();
-    qDebug()<<sessionId<<" left Chatroom";
     //Lets Remove the Online Client from Chatroom
     QString signOffUser;
     QMapIterator<qintptr,ChatConnection*> i(mOnlineClients);
@@ -67,7 +63,6 @@ void ChatRoom::onClientDisConnection(const qintptr&sessionId)
         i.next();
         if(i.key()==sessionId)
         {
-            qDebug()<<"Found one";
             signOffUser=i.value()->name();
             mOnlineClients.remove(i.key());
         }
@@ -91,5 +86,4 @@ void ChatRoom::createNewSession(const qintptr socketSessionId)
     //Lets Insert to Online map
     mOnlineClients.insert(socketSessionId,newClient);
     newClient->start();
-
 }

@@ -5,7 +5,9 @@
 #include <QTcpSocket>
 #include "messagehandler.h"
 
-class ChatRoom;
+/*!
+ * \brief The ChatConnection class
+ */
 class ChatConnection : public QThread
 {
     Q_OBJECT
