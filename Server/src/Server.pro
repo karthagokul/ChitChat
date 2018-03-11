@@ -2,6 +2,8 @@ QT -= gui
 
 CONFIG+=websocketsupport multicastsupport
 
+COMMON_PATH=../../common/src
+
 websocketsupport {
     message("Websocket Support :Enabled")
     QT+=websockets
@@ -12,8 +14,8 @@ websocketsupport {
 
 multicastsupport {
     message("Server Discovery : Enabled")
-    SOURCES += ../common/discoveryhandler.cpp
-    HEADERS +=../common/discoveryhandler.h
+    SOURCES += $${COMMON_PATH}/discoveryhandler.cpp
+    HEADERS += $${COMMON_PATH}/discoveryhandler.h
     DEFINES+=SEARCH_SERVER
 }else {
     message("Server Discovery : Disabled")
@@ -23,7 +25,7 @@ QT +=network
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
-INCLUDEPATH+=../common
+INCLUDEPATH+=$${COMMON_PATH}
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -40,12 +42,12 @@ SOURCES += main.cpp \
     server.cpp \
     serverapplication.cpp \
     chatroom.cpp \
-    ../common/messagehandler.cpp \
+    $${COMMON_PATH}/messagehandler.cpp \
     chatsession.cpp
 
 HEADERS += \
     server.h \
     serverapplication.h \
     chatroom.h \
-    ../common/messagehandler.h \
+    $${COMMON_PATH}/messagehandler.h \
     chatsession.h

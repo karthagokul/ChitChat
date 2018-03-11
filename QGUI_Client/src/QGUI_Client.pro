@@ -10,14 +10,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = QGUI_Client
 TEMPLATE = app
-INCLUDEPATH +=../common
+COMMON_PATH=../../common/src
+
+INCLUDEPATH+=$${COMMON_PATH}
 
 CONFIG+=multicastsupport
 
 multicastsupport {
     message("Server Discovery : Enabled")
-    SOURCES += ../common/discoveryhandler.cpp
-    HEADERS +=../common/discoveryhandler.h
+    SOURCES += $${COMMON_PATH}/discoveryhandler.cpp
+    HEADERS +=$${COMMON_PATH}/discoveryhandler.h
     DEFINES+=SEARCH_SERVER
 }else {
     message("Server Discovery : Disabled")
@@ -26,13 +28,13 @@ multicastsupport {
 
 SOURCES += main.cpp\
         widget.cpp \
-    ../common/messagehandler.cpp \
+    $${COMMON_PATH}/messagehandler.cpp \
     serverlogindialog.cpp \
     clientconnection.cpp \
     mainwindow.cpp
 
 HEADERS  += widget.h \
-    ../common/messagehandler.h \
+    $${COMMON_PATH}/messagehandler.h \
     serverlogindialog.h \
     clientconnection.h \
     mainwindow.h
