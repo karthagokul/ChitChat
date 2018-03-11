@@ -10,25 +10,48 @@
 #define B_GROUP_ADDRESS "239.255.43.21"
 #define SEARCH_QUERY_STRING "CHITCHAT_SERVER_SEARCH"
 #define SEARCH_RESULT_SUBSTRING "CHITCHAT_SERVER_RESULTS"
-const int tcp_server_port=8080; //This need to be moved to central place with server
+const int tcp_server_port=8080; //This need to be moved to central place with server, For now its Okay!
 
-
-/* Now only IPV4 support
+/*!
+ * \brief The Class Handles Search and Resolving the Servers available in the Network . It uses Multi
+ * Casting Mechanism to discover a Server (very like UPNP), Server sends his IP and Port to connect
+ * When there is a Search Query.
+ * This Feature can be enabled/disabled through a pro file configuration.
+ * \todo it supports only IPV4 and the SendMyIdentity is Exposed to Both Client and Server . Should Retrict to Server only
  */
 class DiscoveryManager:public QObject
 {
     Q_OBJECT
 public:
     DiscoveryManager(QObject* aParent=0);
+    /*!
+     * \brief init Function to initiate the discovery mechanism
+     * \return
+     */
     bool init();
+    /*!
+     * \brief searchServer A Client can use this function to initiate a search for the available server in the network
+     * \return
+     */
     bool searchServer();
-    //Need to be used by server only ,Dont expose this  guy, temporary
+    /*!
+     * \brief sendMyIdentity function can be used to send the server identity up on a search request
+     * \return
+     */
     bool sendMyIdentity();
 
 private slots:
     void processRequest();
 signals:
+    /*!
+     * \brief serverinfo provides the remote server ip and Port received
+     * \param ip : Address
+     * \param port : Port Number
+     */
     void serverinfo(QString ip,int port);
+    /*!
+     * \brief The Signal Get Triggered Up on a Search Query
+     */
     void search();
 private:
     QUdpSocket mUdpSocket;
