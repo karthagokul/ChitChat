@@ -1,14 +1,25 @@
 QT -= gui
 
-CONFIG+=websocketsupport
+CONFIG+=websocketsupport multicastsupport
+
 websocketsupport {
-    message("The Project has been enabled for websocket support")
+    message("Websocket Support :Enabled")
     QT+=websockets
     DEFINES+=ENABLE_WEBSOCKETS
+} else {
+    message("Websocket Support : Disabled")
 }
-QT +=network
 
-message(Libraries: $$[QT_INSTALL_LIBS])
+multicastsupport {
+    message("Server Discovery : Enabled")
+    SOURCES += ../common/discoveryhandler.cpp
+    HEADERS +=../common/discoveryhandler.h
+    DEFINES+=SEARCH_SERVER
+}else {
+    message("Server Discovery : Disabled")
+}
+
+QT +=network
 
 CONFIG += c++11 console
 CONFIG -= app_bundle

@@ -10,7 +10,9 @@
 #endif
 
 class ChatRoom;
-
+#ifdef SEARCH_SERVER
+class DiscoveryManager;
+#endif
 const int tcp_port=8080;
 
 #ifdef ENABLE_WEBSOCKETS
@@ -41,6 +43,9 @@ protected slots:
 #ifdef ENABLE_WEBSOCKETS
     void onNewWebConnection();
 #endif
+#ifdef SEARCH_SERVER
+    void onSearch();
+#endif
 private:
     ChatRoom *mChatRoom;
     QTcpServer *mSocketServer;
@@ -48,6 +53,9 @@ private:
     QWebSocketServer *mWebSocketServer;
 #endif
 
+#ifdef SEARCH_SERVER
+    DiscoveryManager *mSearchHandler;
+#endif
 };
 
 #endif // SERVER_H

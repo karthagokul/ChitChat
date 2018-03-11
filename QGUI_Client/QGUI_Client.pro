@@ -12,6 +12,17 @@ TARGET = QGUI_Client
 TEMPLATE = app
 INCLUDEPATH +=../common
 
+CONFIG+=multicastsupport
+
+multicastsupport {
+    message("Server Discovery : Enabled")
+    SOURCES += ../common/discoveryhandler.cpp
+    HEADERS +=../common/discoveryhandler.h
+    DEFINES+=SEARCH_SERVER
+}else {
+    message("Server Discovery : Disabled")
+}
+
 
 SOURCES += main.cpp\
         widget.cpp \

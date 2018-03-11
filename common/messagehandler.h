@@ -69,7 +69,7 @@ public:
 /*
  * Gokul's ChitChat Protocol
 Login: FromClient
-{command:"logon",,sender:"Gokul"}
+{command:"logon",sender:"Gokul"}
 
 Buddies: FromServer
 {command:"online","buddies": ["Thomas","Salvatore","Farhan"],"version": 1.0 }
