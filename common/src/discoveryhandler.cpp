@@ -21,7 +21,7 @@ bool DiscoveryManager::sendMyIdentity()
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
             if(!address.toString().isEmpty())
             {
-               ip=address.toString();
+                ip=address.toString();
             }
     }
     if(ip.isEmpty())
@@ -42,6 +42,33 @@ bool DiscoveryManager::init()
     return true;
 }
 
+bool DiscoveryManager::parseRequest(QString strToParse)
+{
+    bool success=false;
+    if(strToParse==SEARCH_QUERY_STRING)
+    {
+        emit search();
+        success=true;
+    }
+    if(strToParse.startsWith(SEARCH_RESULT_SUBSTRING))
+    {
+        strToParse=strToParse.remove(SEARCH_RESULT_SUBSTRING);
+        QStringList ipDetails=strToParse.split(":");
+        if(ipDetails.count()==2)
+        {
+            QString host=ipDetails[0];
+            int port=ipDetails[1].toInt();
+            emit serverinfo(host,port);
+            success=true;
+        }
+    }
+    else
+    {
+        //Do Nothing
+    }
+    return success;
+}
+
 void DiscoveryManager::processRequest()
 {
     QByteArray datagram;
@@ -50,34 +77,12 @@ void DiscoveryManager::processRequest()
     while (mUdpSocket.hasPendingDatagrams()) {
         datagram.resize(int(mUdpSocket.pendingDatagramSize()));
         mUdpSocket.readDatagram(datagram.data(), datagram.size());
-        qDebug()<<(tr("Received IPv4 datagram: \"%1\"")
-                   .arg(datagram.constData()));
+        //        qDebug()<<(tr("Received IPv4 datagram: \"%1\"")
+        //                   .arg(datagram.constData()));
     }
     QString strToParse=datagram.constData();
-    if(strToParse==SEARCH_QUERY_STRING)
+    if(!parseRequest(strToParse))
     {
-        qDebug()<<"Someone is Searching me";
-        emit search();
-       // DiscoverySender sender;
-      //  if(!sender.sendIdentity())
-      //  {
-      //     qCritical()<<"Unable to respond to Search Request";
-       // }
-    }
-    if(strToParse.startsWith(SEARCH_RESULT_SUBSTRING))
-    {
-        qDebug()<<"Got a Search Result";
-        strToParse=strToParse.remove(SEARCH_RESULT_SUBSTRING);
-        QStringList ipDetails=strToParse.split(":");
-        if(ipDetails.count()==2)
-        {
-            QString host=ipDetails[0];
-            int port=ipDetails[1].toInt();
-            emit serverinfo(host,port);
-        }
-    }
-    else
-    {
-        //Do Nothing
+        qDebug()<<"Got a Discover Message,Ignoring!";
     }
 }

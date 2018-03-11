@@ -42,6 +42,8 @@ public:
 
 private slots:
     void processRequest();
+protected:
+    bool parseRequest(QString data);
 signals:
     /*!
      * \brief serverinfo provides the remote server ip and Port received

@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+TARGET = cc-client
+TEMPLATE = app
 
+QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QGUI_Client
-TEMPLATE = app
 COMMON_PATH=../../common/src
 
 INCLUDEPATH+=$${COMMON_PATH}

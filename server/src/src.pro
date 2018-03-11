@@ -1,3 +1,4 @@
+TARGET = cc-server
 QT -= gui
 
 CONFIG+=websocketsupport multicastsupport

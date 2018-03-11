@@ -3,8 +3,7 @@
 
 class TestQString: public QObject
 {
-    Q_OBJECT
-private slots:
+   public:
     void toUpper();
 };
 
@@ -15,4 +14,3 @@ void TestQString::toUpper()
 }
 
 QTEST_MAIN(TestQString)
-#include "testqstring.moc"

@@ -1,18 +1,39 @@
 
 #include <QtTest/QtTest>
+#include "discoveryhandler.h"
 
-class TestQString: public QObject
+class UTDiscoveryManager:public DiscoveryManager
 {
     Q_OBJECT
-private slots:
-    void toUpper();
+ private slots:
+    void testParseForSearch()
+    {
+        QString data;
+        QSignalSpy spy(this, SIGNAL (search()));
+        DiscoveryManager::parseRequest(data);
+        QCOMPARE (spy.count(), 0);
+        spy.clear();
+        data=SEARCH_QUERY_STRING;
+        DiscoveryManager::parseRequest(data);
+        QCOMPARE (spy.count(), 1);
+    }
+
+    void testParseForResults()
+    {
+        QString data;
+        QSignalSpy spy(this, SIGNAL (search()));
+        DiscoveryManager::parseRequest(data);
+        QCOMPARE (spy.count(), 0);
+        spy.clear();
+        data=SEARCH_QUERY_STRING;
+        DiscoveryManager::parseRequest(data);
+        QCOMPARE (spy.count(), 1);
+    }
+
 };
 
-void TestQString::toUpper()
-{
-    QString str = "Hello";
-    QCOMPARE(str.toUpper(), QString("HELLO"));
-}
 
-QTEST_MAIN(TestQString)
-#include "testqstring.moc"
+
+QTEST_MAIN(UTDiscoveryManager)
+
+#include "main.moc"
