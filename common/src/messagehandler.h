@@ -23,7 +23,7 @@
 /*!
  * \brief The Message class
  */
-class Message
+class Message:public QObject
 {
 public:
     /*!

@@ -56,10 +56,13 @@ bool DiscoveryManager::parseRequest(QString strToParse)
         QStringList ipDetails=strToParse.split(":");
         if(ipDetails.count()==2)
         {
-            QString host=ipDetails[0];
-            int port=ipDetails[1].toInt();
-            emit serverinfo(host,port);
-            success=true;
+            if(!ipDetails[0].isEmpty() && !ipDetails[1].isEmpty())
+            {
+                QString host=ipDetails[0];
+                int port=ipDetails[1].toInt();
+                emit serverinfo(host,port);
+                success=true;
+            }
         }
     }
     else
@@ -77,12 +80,10 @@ void DiscoveryManager::processRequest()
     while (mUdpSocket.hasPendingDatagrams()) {
         datagram.resize(int(mUdpSocket.pendingDatagramSize()));
         mUdpSocket.readDatagram(datagram.data(), datagram.size());
-        //        qDebug()<<(tr("Received IPv4 datagram: \"%1\"")
-        //                   .arg(datagram.constData()));
     }
     QString strToParse=datagram.constData();
     if(!parseRequest(strToParse))
     {
-        qDebug()<<"Got a Discover Message,Ignoring!";
+       // qDebug()<<"Got a Discover Message,Ignoring!";
     }
 }

@@ -3,11 +3,11 @@
 #include <QDebug>
 
 Message::Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies)
-    :mType(aType),mBuddies(aBuddies),mSender(aSender),mMessage(aMessage)
+    :QObject(0),mType(aType),mBuddies(aBuddies),mSender(aSender),mMessage(aMessage)
 {
 }
 
-Message::Message()
+Message::Message():QObject(0)
 {
     mType=Message::Invalid;
     mBuddies=QStringList();
@@ -15,7 +15,7 @@ Message::Message()
     mSender=QString();
 }
 
-Message::Message(const Message &aMessage)
+Message::Message(const Message &aMessage):QObject(0)
 {
     this->mType=aMessage.type();
     this->mMessage=aMessage.message();
@@ -49,78 +49,79 @@ bool Message::jsonObjectToString(QJsonObject &aObject,QString aID,QString &aStri
     return true;
 }
 
-Message::Message(const QByteArray &aData)
+Message::Message(const QByteArray &aData):QObject(0)
 {
-    qDebug()<<QString::fromUtf8(aData);
     QJsonDocument d = QJsonDocument::fromJson(aData);
     if(d.isNull())
     {
         qCritical()<<"Unable to Parse the Protocol";
         mType=Invalid;
     }
-    QJsonObject dataObject = d.object();
-    QString command;
-    if(!jsonObjectToString(dataObject,COMMAND,command))
-    {
-        qCritical()<<"Unable to Parse the Protocol";
-        mType=Invalid;
-    }
-
-    if(command==COMMAND_LOGON)
-    {
-        mType=LogOn;
-        if(!jsonObjectToString(dataObject,SENDER,mSender))
-        {
-            qCritical()<<COMMAND_CHAT<<":Parse Error";
-            mType=Invalid;
-        }
-        qDebug()<<"Sender is "<<mSender;
-    }
-    else if(command==COMMAND_CHAT)
-    {
-        mType=Chat;
-        if(!jsonObjectToString(dataObject,MESSAGE,mMessage)||\
-                !jsonObjectToString(dataObject,SENDER,mSender))
-        {
-            qCritical()<<COMMAND_CHAT<<":Parse Error";
-            mType=Invalid;
-        }
-    }
-    else if(command==COMMAND_LOGOFF)
-    {
-        mType=LogOff;
-        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
-        {
-            qCritical()<<COMMAND_LOGOFF<<":Parse Error";
-            mType=Invalid;
-        }
-        jsonObjectToString(dataObject,MESSAGE,mMessage);
-    }
-    else if(command==COMMAND_MENTION)
-    {
-        mType=Mention;
-        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies)|| \
-                !jsonObjectToString(dataObject,MESSAGE,mMessage)||\
-                !jsonObjectToString(dataObject,SENDER,mSender))
-        {
-            qCritical()<<COMMAND_MENTION<<":Parse Error";
-            mType=Invalid;
-        }
-    }
-    else if(command==COMMAND_ONLINE)
-    {
-        mType=Online;
-        if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
-        {
-            qCritical()<<COMMAND_ONLINE<<":Parse Error";
-            mType=Invalid;
-        }
-        jsonObjectToString(dataObject,MESSAGE,mMessage);
-    }
     else
     {
-        qCritical()<<"Unknown Protocol";
-        mType=Invalid;
+        QJsonObject dataObject = d.object();
+        QString command;
+        if(!jsonObjectToString(dataObject,COMMAND,command))
+        {
+            qCritical()<<"Unable to Recognize the command";
+            mType=Invalid;
+        }
+
+        if(command==COMMAND_LOGON)
+        {
+            mType=LogOn;
+            if(!jsonObjectToString(dataObject,SENDER,mSender))
+            {
+                qCritical()<<COMMAND_CHAT<<":Parse Error";
+                mType=Invalid;
+            }
+        }
+        else if(command==COMMAND_CHAT)
+        {
+            mType=Chat;
+            if(!jsonObjectToString(dataObject,MESSAGE,mMessage)||\
+                    !jsonObjectToString(dataObject,SENDER,mSender))
+            {
+                qCritical()<<COMMAND_CHAT<<":Parse Error";
+                mType=Invalid;
+            }
+        }
+        else if(command==COMMAND_LOGOFF)
+        {
+            mType=LogOff;
+            if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
+            {
+                qCritical()<<COMMAND_LOGOFF<<":Parse Error";
+                mType=Invalid;
+            }
+            jsonObjectToString(dataObject,MESSAGE,mMessage);
+        }
+        else if(command==COMMAND_MENTION)
+        {
+            mType=Mention;
+            if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies)|| \
+                    !jsonObjectToString(dataObject,MESSAGE,mMessage)||\
+                    !jsonObjectToString(dataObject,SENDER,mSender))
+            {
+                qCritical()<<COMMAND_MENTION<<":Parse Error";
+                mType=Invalid;
+            }
+        }
+        else if(command==COMMAND_ONLINE)
+        {
+            mType=Online;
+            if(!jsonObjectToStringList(dataObject,BUDDIES,mBuddies))
+            {
+                qCritical()<<COMMAND_ONLINE<<":Parse Error";
+                mType=Invalid;
+            }
+            jsonObjectToString(dataObject,MESSAGE,mMessage);
+        }
+        else
+        {
+            qCritical()<<"Unknown Protocol";
+            mType=Invalid;
+        }
     }
 }
 
