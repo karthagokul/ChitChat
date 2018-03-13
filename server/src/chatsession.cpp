@@ -9,6 +9,8 @@ ChatSession::ChatSession(QWebSocket *aSocket,QObject *aParent) :
     QThread(aParent),mWebSocket(aSocket),mType(WebSocketClient)
 {
     mId=QUuid::createUuid().toString();
+    connect(mWebSocket,SIGNAL(textMessageReceived(QString)),this,SLOT(onWebSocketRead(QString)));
+    connect(mWebSocket,SIGNAL(disconnected()),this,SLOT(disconnected()));
 }
 #endif
 
@@ -16,6 +18,8 @@ ChatSession::ChatSession(QTcpSocket *aSocket, QObject *aParent):
     QThread(aParent),mSocket(aSocket),mType(TCPSocketClient)
 {
     mId=QUuid::createUuid().toString();
+    connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
+    connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 }
 
 ChatSession:: ~ChatSession()
@@ -24,18 +28,7 @@ ChatSession:: ~ChatSession()
 
 void ChatSession::run()
 {
-    if(mType==TCPSocketClient)
-    {
-        connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-        connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    }
-#ifdef ENABLE_WEBSOCKETS
-    if(mType==WebSocketClient)
-    {
-        connect(mWebSocket,SIGNAL(textMessageReceived(QString)),this,SLOT(onWebSocketRead(QString)));
-        connect(mWebSocket,SIGNAL(disconnected()),this,SLOT(disconnected()));
-    }
-#endif
+    qDebug()<<Q_FUNC_INFO;
     exec();
 }
 
@@ -53,14 +46,13 @@ void ChatSession::onWebSocketRead(const QString &message)
 
 void ChatSession::readyRead()
 {
-    if(mType==TCPSocketClient)
-    {
-        QByteArray data=mSocket->readAll();
-        onClientRead(data);
-    }
+    QByteArray data=mSocket->readAll();
+    onClientRead(data);
 }
+
 void ChatSession::onClientRead(QByteArray data)
 {
+    qDebug()<<data;
     Message newMessage(data);
     switch (newMessage.type())
     {

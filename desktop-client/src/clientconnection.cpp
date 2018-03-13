@@ -26,6 +26,7 @@ void ClientConnection::onConnected()
     mActive=true;
     Message loginmessage(Message::LogOn,mName,QString(),QStringList());
     mSocket->write(loginmessage.toByteArray());
+    qDebug()<<loginmessage.toByteArray();
     emit stateChanged();
 }
 
