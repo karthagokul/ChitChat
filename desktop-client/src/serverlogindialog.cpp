@@ -17,7 +17,6 @@ ServerLoginDialog::ServerLoginDialog(QWidget *parent) :
     mSearch=new DiscoveryManager(parent);
     connect(mSearch,SIGNAL(serverinfo(QString,int)),this,SLOT(onServerInfo(QString,int)));
     connect(mUi->searchButton,SIGNAL(clicked(bool)),this,SLOT(onSearchClick()));
-    mSearch->init(true);
     mUi->searchButton->setVisible(true);
 #else
     mUi->searchButton->setVisible(false);
@@ -28,7 +27,7 @@ ServerLoginDialog::ServerLoginDialog(QWidget *parent) :
 #ifdef SEARCH_SERVER
 void ServerLoginDialog::onSearchClick()
 {
-     mSearch->searchServer();
+     mSearch->searchMyServer();
 }
 
 void ServerLoginDialog::onServerInfo(QString ip,int port)

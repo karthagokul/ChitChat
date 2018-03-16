@@ -5,8 +5,7 @@
 #include <QUdpSocket>
 #include <QHostAddress>
 
-#define SEARCH_PORT 45455
-#define SEARCH_RESULTS_PORT 45454
+#define SEARCH_PORT 45555
 #define SEARCH_QUERY_STRING "CHITCHAT_SERVER_SEARCH"
 #define SEARCH_RESULT_SUBSTRING "CHITCHAT_SERVER_RESULTS"
 const int tcp_server_port=8080; //This need to be moved to central place with server, For now its Okay!
@@ -24,26 +23,16 @@ class DiscoveryManager:public QObject
 public:
     DiscoveryManager(QObject* aParent=0);
     /*!
-     * \brief init Function to initiate the discovery mechanism
-     * \return
-     */
-    bool init(bool isSearchClient=true);
-    /*!
-     * \brief searchServer A Client can use this function to initiate a search for the available server in the network
-     * \return
-     */
-    bool searchServer();
-    /*!
      * \brief sendMyIdentity function can be used to send the server identity up on a search request
      * \return
      */
     bool sendMyIdentity();
 
-private slots:
-    void processSearchRequest();
-    void processResultRequest();
-protected:
-    bool parseRequest(QString data);
+    /*!
+     * \brief search
+     */
+    void searchMyServer();
+
 signals:
     /*!
      * \brief serverinfo provides the remote server ip and Port received
@@ -51,14 +40,13 @@ signals:
      * \param port : Port Number
      */
     void serverinfo(QString ip,int port);
-    /*!
-     * \brief The Signal Get Triggered Up on a Search Query
-     */
     void search();
+private slots:
+    void processResults();
 private:
-    QUdpSocket mClientSocket,mServerSocket;
-    bool mSearchClient;
+    bool parseRequest(QString strToParse);
+private:
+    QUdpSocket mSocket;
 };
-
 
 #endif // DISCOVERYHANDDLER_H
