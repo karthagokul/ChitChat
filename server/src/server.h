@@ -39,11 +39,20 @@ public:
     virtual ~Server();
 
 protected slots:
+    /*!
+     * \brief onNewTCPConnection
+     */
     void onNewTCPConnection();
 #ifdef ENABLE_WEBSOCKETS
+    /*!
+     * \brief onNewWebConnection
+     */
     void onNewWebConnection();
 #endif
 #ifdef SEARCH_SERVER
+    /*!
+     * \brief onSearch
+     */
     void onSearch();
 #endif
 private:

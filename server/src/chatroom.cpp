@@ -30,11 +30,13 @@ void  ChatRoom::broadcastMessage(const Message &aMessage,const QString&sessionId
 
 void ChatRoom::onMessageRequest(const Message &aMessage,const QString&sessionId)
 {
+    Q_UNUSED(sessionId);
     broadcastMessage(aMessage,QString());
 }
 
 QStringList ChatRoom::getBuddies(const QString&sessionId)
 {
+    Q_UNUSED(sessionId);
     QStringList buddies;
     QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {

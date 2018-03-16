@@ -17,7 +17,7 @@ Server::Server(QObject *aParent)
 #endif
 
 #ifdef SEARCH_SERVER
-    mSearchHandler=new DiscoveryManager(aParent);
+    mSearchHandler=new DiscoveryManager(this);
     connect(mSearchHandler,SIGNAL(search()),this,SLOT(onSearch()));
     mSearchHandler->init();
 #endif
@@ -33,22 +33,18 @@ void Server::onSearch()
 
 Server::~Server()
 {
-    mChatRoom->closeAllSessions();
-    delete mChatRoom;
-    mChatRoom=0;
-
+    if(mChatRoom)
+    {
+        mChatRoom->deleteLater();
+    }
     if(mSocketServer)
     {
-        mSocketServer->close();
-        delete mSocketServer;
-        mSocketServer=0;
+        mSocketServer->deleteLater();
     }
 #ifdef ENABLE_WEBSOCKETS
     if(mWebSocketServer)
     {
-        mWebSocketServer->close();
-        delete mWebSocketServer;
-        mWebSocketServer=0;
+        mWebSocketServer->deleteLater();
     }
 #endif
 }

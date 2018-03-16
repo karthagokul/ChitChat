@@ -13,17 +13,52 @@ class ChatRoom :public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     * \brief ChatRoom
+     * \param aParent
+     */
     ChatRoom(QObject *aParent);
+    /*!
+     * \brief registerSession
+     * \param session
+     */
     void registerSession(ChatSession *session);
+    /*!
+     * \brief closeAllSessions
+     */
     void closeAllSessions();
 private:
+    /*!
+     * \brief getBuddies
+     * \param sessionId
+     * \return
+     */
     QStringList getBuddies(const QString &sessionId);
-protected slots:
-    void onClientDisConnection(const QString&sessionId);
-    void onLogon(const Message &aMessage,const QString&sessionId);
-    void onMessageRequest(const Message &aMessage,const QString&sessionId);
-private:
+    /*!
+     * \brief broadcastMessage
+     * \param aMessage
+     * \param sessionId
+     */
     void broadcastMessage(const Message &aMessage,const QString&sessionId=QString());
+
+protected slots:
+    /*!
+     * \brief onClientDisConnection
+     * \param sessionId
+     */
+    void onClientDisConnection(const QString&sessionId);
+    /*!
+     * \brief onLogon
+     * \param aMessage
+     * \param sessionId
+     */
+    void onLogon(const Message &aMessage,const QString&sessionId);
+    /*!
+     * \brief onMessageRequest
+     * \param aMessage
+     * \param sessionId
+     */
+    void onMessageRequest(const Message &aMessage,const QString&sessionId);
 private:
     QMap<QString,ChatSession*> mOnlineClients;
 };

@@ -1,8 +1,11 @@
 #include <QCoreApplication>
 #include "serverapplication.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     ServerApplication a(argc, argv);
-    return a.start();
+    int val= a.start();
+    qDebug()<<val;
+    return 0;
 }

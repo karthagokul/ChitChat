@@ -37,13 +37,46 @@ private:
     QString mMessage;
 public:
     Message();
+    /*!
+     * \brief Message
+     * \param aMessage
+     */
     Message(const Message &aMessage);
+    /*!
+     * \brief Message
+     * \param aType
+     * \param aSender
+     * \param aMessage
+     * \param aBuddies
+     */
     Message(MessageType aType,QString aSender,QString aMessage,QStringList aBuddies);
+    /*!
+     * \brief Message
+     * \param aData
+     */
     Message(const QByteArray &aData);
+    /*!
+     * \brief toByteArray
+     * \return
+     */
     QByteArray toByteArray() const;
 
 private:
+    /*!
+     * \brief jsonObjectToStringList
+     * \param aObject
+     * \param aID
+     * \param aStringList
+     * \return
+     */
     bool jsonObjectToStringList(QJsonObject &aObject,QString aID,QStringList &aStringList);
+    /*!
+     * \brief jsonObjectToString
+     * \param aObject
+     * \param aID
+     * \param aString
+     * \return
+     */
     bool jsonObjectToString(QJsonObject &aObject,QString aID,QString &aString);
 
 public:
@@ -67,7 +100,7 @@ public:
 
 
 /*
- * Gokul's ChitChat Protocol
+ * Protocol
 Login: FromClient
 {command:"logon",sender:"Gokul"}
 
