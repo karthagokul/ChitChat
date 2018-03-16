@@ -17,7 +17,7 @@ ServerLoginDialog::ServerLoginDialog(QWidget *parent) :
     mSearch=new DiscoveryManager(parent);
     connect(mSearch,SIGNAL(serverinfo(QString,int)),this,SLOT(onServerInfo(QString,int)));
     connect(mUi->searchButton,SIGNAL(clicked(bool)),this,SLOT(onSearchClick()));
-    mSearch->init();
+    mSearch->init(true);
     mUi->searchButton->setVisible(true);
 #else
     mUi->searchButton->setVisible(false);

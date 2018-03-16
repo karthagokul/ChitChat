@@ -19,7 +19,7 @@ Server::Server(QObject *aParent)
 #ifdef SEARCH_SERVER
     mSearchHandler=new DiscoveryManager(this);
     connect(mSearchHandler,SIGNAL(search()),this,SLOT(onSearch()));
-    mSearchHandler->init();
+    mSearchHandler->init(false); //not a client, hence false
 #endif
 
 }

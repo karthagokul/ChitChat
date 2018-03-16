@@ -27,7 +27,7 @@ public:
      * \brief init Function to initiate the discovery mechanism
      * \return
      */
-    bool init();
+    bool init(bool isSearchClient=true);
     /*!
      * \brief searchServer A Client can use this function to initiate a search for the available server in the network
      * \return
@@ -57,6 +57,7 @@ signals:
     void search();
 private:
     QUdpSocket mReceiveSocket,mSendSocket;
+    bool mSearchClient;
 };
 
 

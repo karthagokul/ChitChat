@@ -30,17 +30,24 @@ bool DiscoveryManager::sendMyIdentity()
     }
 
     QByteArray datagram =QString(SEARCH_RESULT_SUBSTRING+ip+QString(":")+QString::number(tcp_server_port)).toLocal8Bit();
-    mSendSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
+    mSendSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_RESULTS_PORT);
     return true;
 }
 
-bool DiscoveryManager::init()
+bool DiscoveryManager::init(bool isSearchClient)
 {
-    mReceiveSocket.bind(QHostAddress::AnyIPv4, SEARCH_PORT, QUdpSocket::ShareAddress);
-    //mReceiveSocket.joinMulticastGroup(QHostAddress(QStringLiteral(B_GROUP_ADDRESS)));
-    connect(&mReceiveSocket, SIGNAL(readyRead()),this, SLOT(processSearchRequest()));
-    mSendSocket.bind(QHostAddress::AnyIPv4, SEARCH_RESULTS_PORT, QUdpSocket::ShareAddress);
-    connect(&mSendSocket, SIGNAL(readyRead()),this, SLOT(processResultRequest()));
+    mSearchClient=isSearchClient;
+    if(isSearchClient)
+    {
+        mSendSocket.bind(QHostAddress::AnyIPv4, SEARCH_RESULTS_PORT, QUdpSocket::ShareAddress);
+        connect(&mSendSocket, SIGNAL(readyRead()),this, SLOT(processResultRequest()));
+    }
+    else
+    {
+        mReceiveSocket.bind(QHostAddress::AnyIPv4, SEARCH_PORT, QUdpSocket::ShareAddress);
+        //mReceiveSocket.joinMulticastGroup(QHostAddress(QStringLiteral(B_GROUP_ADDRESS)));
+        connect(&mReceiveSocket, SIGNAL(readyRead()),this, SLOT(processSearchRequest()));
+    }
     return true;
 }
 
@@ -85,15 +92,14 @@ void DiscoveryManager::processResultRequest()
     QString strToParse=datagram.constData();
     if(!parseRequest(strToParse))
     {
-       // qDebug()<<"Got a Discover Message,Ignoring!";
+        // qDebug()<<"Got a Discover Message,Ignoring!";
     }
 
 }
 
 void DiscoveryManager::processSearchRequest()
 {
-    qDebug()<<"got one";
-    QByteArray datagram;
+   QByteArray datagram;
 
     // using QUdpSocket::readDatagram (API since Qt 4)
     while (mReceiveSocket.hasPendingDatagrams()) {
@@ -103,6 +109,6 @@ void DiscoveryManager::processSearchRequest()
     QString strToParse=datagram.constData();
     if(!parseRequest(strToParse))
     {
-       // qDebug()<<"Got a Discover Message,Ignoring!";
+        // qDebug()<<"Got a Discover Message,Ignoring!";
     }
 }
