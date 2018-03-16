@@ -9,7 +9,7 @@ DiscoveryManager::DiscoveryManager(QObject* aParent)
 bool DiscoveryManager::searchServer()
 {
     QByteArray datagram =SEARCH_QUERY_STRING;
-    mReceiveSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
+    mClientSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
     return true;
 }
 
@@ -30,7 +30,7 @@ bool DiscoveryManager::sendMyIdentity()
     }
 
     QByteArray datagram =QString(SEARCH_RESULT_SUBSTRING+ip+QString(":")+QString::number(tcp_server_port)).toLocal8Bit();
-    mSendSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_RESULTS_PORT);
+    mServerSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_RESULTS_PORT);
     return true;
 }
 
@@ -39,14 +39,14 @@ bool DiscoveryManager::init(bool isSearchClient)
     mSearchClient=isSearchClient;
     if(isSearchClient)
     {
-        mSendSocket.bind(QHostAddress::AnyIPv4, SEARCH_RESULTS_PORT, QUdpSocket::ShareAddress);
-        connect(&mSendSocket, SIGNAL(readyRead()),this, SLOT(processResultRequest()));
+        mClientSocket.bind(QHostAddress::AnyIPv4, SEARCH_RESULTS_PORT, QUdpSocket::ShareAddress);
+        connect(&mClientSocket, SIGNAL(readyRead()),this, SLOT(processResultRequest()));
     }
     else
     {
-        mReceiveSocket.bind(QHostAddress::AnyIPv4, SEARCH_PORT, QUdpSocket::ShareAddress);
+        mServerSocket.bind(QHostAddress::AnyIPv4, SEARCH_PORT, QUdpSocket::ShareAddress);
         //mReceiveSocket.joinMulticastGroup(QHostAddress(QStringLiteral(B_GROUP_ADDRESS)));
-        connect(&mReceiveSocket, SIGNAL(readyRead()),this, SLOT(processSearchRequest()));
+        connect(&mServerSocket, SIGNAL(readyRead()),this, SLOT(processSearchRequest()));
     }
     return true;
 }
@@ -82,29 +82,31 @@ bool DiscoveryManager::parseRequest(QString strToParse)
 }
 void DiscoveryManager::processResultRequest()
 {
+    qDebug()<<"Reading";
     QByteArray datagram;
 
     // using QUdpSocket::readDatagram (API since Qt 4)
-    while (mSendSocket.hasPendingDatagrams()) {
-        datagram.resize(int(mSendSocket.pendingDatagramSize()));
-        mSendSocket.readDatagram(datagram.data(), datagram.size());
+    while (mClientSocket.hasPendingDatagrams()) {
+        datagram.resize(int(mClientSocket.pendingDatagramSize()));
+        mClientSocket.readDatagram(datagram.data(), datagram.size());
     }
     QString strToParse=datagram.constData();
     if(!parseRequest(strToParse))
     {
-        // qDebug()<<"Got a Discover Message,Ignoring!";
+        qDebug()<<"Got a Discover Message,Ignoring!";
     }
 
 }
 
 void DiscoveryManager::processSearchRequest()
 {
+    qDebug()<<"got search";
    QByteArray datagram;
 
     // using QUdpSocket::readDatagram (API since Qt 4)
-    while (mReceiveSocket.hasPendingDatagrams()) {
-        datagram.resize(int(mReceiveSocket.pendingDatagramSize()));
-        mReceiveSocket.readDatagram(datagram.data(), datagram.size());
+    while (mServerSocket.hasPendingDatagrams()) {
+        datagram.resize(int(mServerSocket.pendingDatagramSize()));
+        mServerSocket.readDatagram(datagram.data(), datagram.size());
     }
     QString strToParse=datagram.constData();
     if(!parseRequest(strToParse))

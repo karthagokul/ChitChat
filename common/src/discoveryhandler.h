@@ -5,8 +5,8 @@
 #include <QUdpSocket>
 #include <QHostAddress>
 
-#define SEARCH_PORT 45454
-#define SEARCH_RESULTS_PORT 45455
+#define SEARCH_PORT 45455
+#define SEARCH_RESULTS_PORT 45454
 #define SEARCH_QUERY_STRING "CHITCHAT_SERVER_SEARCH"
 #define SEARCH_RESULT_SUBSTRING "CHITCHAT_SERVER_RESULTS"
 const int tcp_server_port=8080; //This need to be moved to central place with server, For now its Okay!
@@ -56,7 +56,7 @@ signals:
      */
     void search();
 private:
-    QUdpSocket mReceiveSocket,mSendSocket;
+    QUdpSocket mClientSocket,mServerSocket;
     bool mSearchClient;
 };
 
