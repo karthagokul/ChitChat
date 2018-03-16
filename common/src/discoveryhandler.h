@@ -7,7 +7,6 @@
 
 #define SEARCH_PORT 45454
 #define SEARCH_RESULTS_PORT 45455
-#define B_GROUP_ADDRESS "239.255.43.21"
 #define SEARCH_QUERY_STRING "CHITCHAT_SERVER_SEARCH"
 #define SEARCH_RESULT_SUBSTRING "CHITCHAT_SERVER_RESULTS"
 const int tcp_server_port=8080; //This need to be moved to central place with server, For now its Okay!
@@ -41,7 +40,8 @@ public:
     bool sendMyIdentity();
 
 private slots:
-    void processRequest();
+    void processSearchRequest();
+    void processResultRequest();
 protected:
     bool parseRequest(QString data);
 signals:
@@ -56,7 +56,7 @@ signals:
      */
     void search();
 private:
-    QUdpSocket mUdpSocket;
+    QUdpSocket mReceiveSocket,mSendSocket;
 };
 
 
