@@ -4,7 +4,7 @@
 DiscoveryManager::DiscoveryManager(QObject* aParent)
     :QObject(aParent)
 {
-    mSocket.bind(QHostAddress::AnyIPv4, SEARCH_PORT, QUdpSocket::ShareAddress);
+    mSocket.bind(SEARCH_PORT, QUdpSocket::ShareAddress);
     connect(&mSocket, SIGNAL(readyRead()),this, SLOT(processResults()));
 }
 
@@ -25,7 +25,7 @@ bool DiscoveryManager::sendMyIdentity()
     }
 
     QByteArray datagram =QString(SEARCH_RESULT_SUBSTRING+ip+QString(":")+QString::number(tcp_server_port)).toLocal8Bit();
-    mSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
+    mSocketSend.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
     return true;
 }
 
@@ -63,12 +63,14 @@ bool DiscoveryManager::parseRequest(QString strToParse)
 
 void DiscoveryManager::processResults()
 {
+
     QByteArray datagram;
     while (mSocket.hasPendingDatagrams()) {
         datagram.resize(int(mSocket.pendingDatagramSize()));
         mSocket.readDatagram(datagram.data(), datagram.size());
     }
     QString strToParse=datagram.constData();
+    qDebug()<<strToParse;
     if(!parseRequest(strToParse))
     {
         // qDebug()<<"Got a Discover Message,Ignoring!";
@@ -78,6 +80,6 @@ void DiscoveryManager::processResults()
 void DiscoveryManager::searchMyServer()
 {
     QByteArray datagram =SEARCH_QUERY_STRING;
-    mSocket.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
+    mSocketSend.writeDatagram(datagram, QHostAddress::Broadcast, SEARCH_PORT);
     return;
 }
