@@ -46,7 +46,7 @@ private slots:
 private:
     bool parseRequest(QString strToParse);
 private:
-    QUdpSocket mSocket,mSocketSend;
+    QUdpSocket *mSocket,*mSocketSend;
 };
 
 #endif // DISCOVERYHANDDLER_H
