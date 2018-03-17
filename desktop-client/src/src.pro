@@ -18,9 +18,7 @@ CONFIG+=multicastsupport
 
 multicastsupport {
     message("Server Discovery : Enabled")
-    SOURCES += $${COMMON_PATH}/discoveryhandler.cpp
-    HEADERS +=$${COMMON_PATH}/discoveryhandler.h
-    DEFINES+=SEARCH_SERVER
+  DEFINES+=SEARCH_SERVER
 }else {
     message("Server Discovery : Disabled")
 }
@@ -31,13 +29,17 @@ SOURCES += main.cpp\
     $${COMMON_PATH}/messagehandler.cpp \
     serverlogindialog.cpp \
     clientconnection.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    sysutils.cpp \
+    chatinputtext.cpp
 
 HEADERS  += widget.h \
     $${COMMON_PATH}/messagehandler.h \
     serverlogindialog.h \
     clientconnection.h \
-    mainwindow.h
+    mainwindow.h \
+    sysutils.h \
+    chatinputtext.h
 
 FORMS    += widget.ui \
     serverlogindialog.ui \

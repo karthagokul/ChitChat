@@ -41,6 +41,13 @@ private:
      */
     void broadcastMessage(const Message &aMessage,const QString&sessionId=QString());
 
+    /*!
+     * \brief sendPrivateMessage
+     * \param aMessage
+     * \param sessionId
+     */
+    void sendPrivateMessage(const Message &aMessage,const QString&sessionId=QString());
+
 protected slots:
     /*!
      * \brief onClientDisConnection

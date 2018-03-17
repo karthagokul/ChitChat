@@ -1,10 +1,13 @@
 
 #include "clientconnection.h"
 #include "messagehandler.h"
+#include "sysutils.h"
 
 ClientConnection::ClientConnection(QObject *parent) :
-    QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mName(getRandomName()),mActive(false)
+    QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false)
 {
+    //mName(getRandomName());
+    mName=SysUtils::getUserName();
     connect(mSocket,SIGNAL(readyRead()),this,SLOT(onRead()));
     connect(mSocket,SIGNAL(connected()),this,SLOT(onConnected()));
     connect(mSocket,SIGNAL(disconnected()),this,SLOT(onDisconnected()));
@@ -99,6 +102,7 @@ void ClientConnection::onRead()
         emit buddylist(readmessage.message());
         break;
     case Message::Chat:
+    case Message::Mention:
         if(readmessage.sender()==mName)
         {
             emit newMessage(readmessage.message(),"You");
@@ -107,20 +111,34 @@ void ClientConnection::onRead()
         {
             emit newMessage(readmessage.message(),readmessage.sender());
         }
+
     default:
         break;
     }
 
 }
 
-void ClientConnection::send(QString &aData)
+void ClientConnection::send(const QString &aData)
 {
     if(!isActive())
     {
         qCritical()<<"No Active Connection to send Message";
         return;
     }
+
     Message newMessage(Message::Chat,mName,aData,QStringList());
+    mSocket->write(newMessage.toByteArray());
+}
+
+void ClientConnection::sendToSelected(const QString &aData,const QStringList &aSelectedBuddies)
+{
+    if(!isActive())
+    {
+        qCritical()<<"No Active Connection to send Message";
+        return;
+    }
+
+    Message newMessage(Message::Mention,mName,aData,aSelectedBuddies);
     mSocket->write(newMessage.toByteArray());
 }
 
@@ -133,17 +151,3 @@ ClientConnection::~ClientConnection()
     }
 }
 
-QString ClientConnection::getRandomName() const
-{
-   const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-   const int randomStringLength = 6; // assuming you want random strings of 12 characters
-
-   QString randomString;
-   for(int i=0; i<randomStringLength; ++i)
-   {
-       int index = qrand() % possibleCharacters.length();
-       QChar nextChar = possibleCharacters.at(index);
-       randomString.append(nextChar);
-   }
-   return QHostInfo::localHostName()+"#"+randomString;
-}

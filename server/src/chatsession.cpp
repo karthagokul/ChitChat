@@ -68,6 +68,9 @@ void ChatSession::onClientRead(QByteArray data)
         qDebug()<<"chat";
         emit newmessage(newMessage,id());
         break;
+    case Message::Mention:
+        qDebug()<<"Private Message";
+        emit newmessage(newMessage,id());
     default:
         break;
     }

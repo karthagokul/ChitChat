@@ -10,6 +10,7 @@ class Widget;
 }
 
 class ClientConnection;
+class QCompleter;
 
 class Widget : public QWidget
 {
@@ -33,6 +34,7 @@ private:
     Ui::Widget *mUi;
     ClientConnection *mConnection;
     QStringListModel mBuddyListModel;
+    QCompleter *mCompletor;
 
 };
 

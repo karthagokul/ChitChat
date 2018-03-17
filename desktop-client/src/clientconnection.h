@@ -14,7 +14,8 @@ public:
     void setUserName(QString aName);
     void stop();
     void start();
-    void send(QString &aData);
+    void send(const QString &aData);
+    void sendToSelected(const QString &aData,const QStringList &aSelectedBuddies);
     bool isActive()
     {
         return mActive;
@@ -24,9 +25,6 @@ public:
     {
         return mBuddies;
     }
-
-private:
-    QString getRandomName() const;
 
 signals:
     void stateChanged();

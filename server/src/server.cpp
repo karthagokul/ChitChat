@@ -3,7 +3,6 @@
 #include <QNetworkInterface>
 #include "chatroom.h"
 #include "chatsession.h"
-#include "discoveryhandler.h"
 
 Server::Server(QObject *aParent)
     :QObject(aParent),mChatRoom(0)
@@ -16,20 +15,7 @@ Server::Server(QObject *aParent)
     connect(mWebSocketServer,SIGNAL(newConnection()),this,SLOT(onNewWebConnection()));
 #endif
 
-#ifdef SEARCH_SERVER
-    mSearchHandler=new DiscoveryManager(this);
-    connect(mSearchHandler,SIGNAL(search()),this,SLOT(onSearch()));
-    //not a client, hence false
-#endif
-
 }
-
-#ifdef SEARCH_SERVER
-void Server::onSearch()
-{
-    mSearchHandler->sendMyIdentity();
-}
-#endif
 
 Server::~Server()
 {

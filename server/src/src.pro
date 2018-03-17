@@ -13,14 +13,6 @@ websocketsupport {
     message("Websocket Support : Disabled")
 }
 
-multicastsupport {
-    message("Server Discovery : Enabled")
-    SOURCES += $${COMMON_PATH}/discoveryhandler.cpp
-    HEADERS += $${COMMON_PATH}/discoveryhandler.h
-    DEFINES+=SEARCH_SERVER
-}else {
-    message("Server Discovery : Disabled")
-}
 
 QT +=network
 

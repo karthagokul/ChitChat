@@ -21,17 +21,38 @@ void  ChatRoom::broadcastMessage(const Message &aMessage,const QString&sessionId
     QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
-        if(i.key()!=sessionId)
+       // if(i.key()!=sessionId)
         {
             i.value()->write(aMessage.toByteArray());
         }
     }
 }
-
+void ChatRoom::sendPrivateMessage(const Message &aMessage,const QString&sessionId)
+{
+    qDebug()<<"Private Message";
+    QMapIterator<QString,ChatSession*> i(mOnlineClients);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()->name() ==aMessage.sender() || aMessage.buddies().contains(i.value()->name()))
+        {
+            qDebug()<<"Sendint to "<<i.value()->name();
+            i.value()->write(aMessage.toByteArray());
+        }
+    }
+}
 void ChatRoom::onMessageRequest(const Message &aMessage,const QString&sessionId)
 {
     Q_UNUSED(sessionId);
-    broadcastMessage(aMessage,QString());
+    qDebug()<<aMessage.buddies();
+    if(aMessage.type()==Message::Mention)
+    {
+        sendPrivateMessage(aMessage,QString());
+    }
+    else
+    {
+        broadcastMessage(aMessage,QString());
+    }
+
 }
 
 QStringList ChatRoom::getBuddies(const QString&sessionId)

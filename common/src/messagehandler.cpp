@@ -105,6 +105,7 @@ Message::Message(const QByteArray &aData):QObject(0)
             {
                 qCritical()<<COMMAND_MENTION<<":Parse Error";
                 mType=Invalid;
+                qDebug()<<"Sending"<<mMessage<<" to "<<mBuddies;
             }
         }
         else if(command==COMMAND_ONLINE)

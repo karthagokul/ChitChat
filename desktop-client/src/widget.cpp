@@ -3,7 +3,7 @@
 #include  "serverlogindialog.h"
 #include "clientconnection.h"
 #include <QDebug>
-
+#include <QCompleter>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -17,6 +17,10 @@ Widget::Widget(QWidget *parent) :
     connect(mConnection,SIGNAL(buddylist(QString)),this,SLOT(onBuddyList(QString)));
     connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
     connect(mConnection,SIGNAL(error(QString)),this,SLOT(onError(QString)));
+
+    //Lets setup the completor to the widget
+    mCompletor=new QCompleter(this);
+    mUi->inputTextView->setCompleter(mCompletor);
 }
 
 void Widget::showLoginDialog()
@@ -66,12 +70,23 @@ void Widget::onBuddyList(QString aMessage)
     mBuddyListModel.setStringList(mConnection->buddies());
     mUi->buddyListView->setModel(&mBuddyListModel);
     mUi->chatView->append(aMessage);
+    mCompletor->setModel(&mBuddyListModel);
 }
 
 void  Widget::onSendButtonClick()
 {
     QString text=mUi->inputTextView->toPlainText();
-    mConnection->send(text);
+    if(mUi->inputTextView->autokeywords().count()==0)
+    {
+        qDebug()<<"Sending to alone";
+           mConnection->send(text);
+    }
+    else
+    {
+        qDebug()<<"Sending to Buddies";
+            mConnection->sendToSelected(text,mUi->inputTextView->autokeywords());
+    }
+
     mUi->inputTextView->clear();
 }
 
