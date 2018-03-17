@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     clientconnection.cpp \
     mainwindow.cpp \
     sysutils.cpp \
-    chatinputtext.cpp
+    chatinputtext.cpp \
+    emotiselectorwidget.cpp
 
 HEADERS  += widget.h \
     $${COMMON_PATH}/messagehandler.h \
@@ -39,8 +40,12 @@ HEADERS  += widget.h \
     clientconnection.h \
     mainwindow.h \
     sysutils.h \
-    chatinputtext.h
+    chatinputtext.h \
+    emotiselectorwidget.h
 
 FORMS    += widget.ui \
     serverlogindialog.ui \
     mainwindow.ui
+
+RESOURCES += \
+    client.qrc

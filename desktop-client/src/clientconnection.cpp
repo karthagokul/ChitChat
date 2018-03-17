@@ -41,6 +41,7 @@ void ClientConnection::onDisconnected()
 
 void ClientConnection::start()
 {
+    qDebug()<<"Connecting to Server";
     if(isActive())
     {
         qDebug()<<"Already Have an Active Session";
@@ -71,6 +72,7 @@ void ClientConnection::onError(QAbstractSocket::SocketError aError)
 
 void ClientConnection::stop()
 {
+    qDebug()<<"Disconnecting from Server";
     if(!isActive())
     {
         qDebug()<<"Do not have Active Session";
@@ -86,6 +88,7 @@ void ClientConnection::stop()
 
 void ClientConnection::onRead()
 {
+    //qDebug()<<"On Server Message";
     Message readmessage(mSocket->readAll());
     switch (readmessage.type()) {
     case Message::Invalid:

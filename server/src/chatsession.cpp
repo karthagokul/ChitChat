@@ -9,8 +9,8 @@ ChatSession::ChatSession(QWebSocket *aSocket,QObject *aParent) :
     QThread(aParent),mWebSocket(aSocket),mType(WebSocketClient)
 {
     mId=QUuid::createUuid().toString();
-    connect(mWebSocket,SIGNAL(textMessageReceived(QString)),this,SLOT(onWebSocketRead(QString)));
-    connect(mWebSocket,SIGNAL(disconnected()),this,SLOT(disconnected()));
+    connect(mWebSocket,SIGNAL(textMessageReceived(QString)),this,SLOT(onWebSocketRead(QString)), Qt::QueuedConnection);
+    connect(mWebSocket,SIGNAL(disconnected()),this,SLOT(disconnected()), Qt::QueuedConnection);
 }
 #endif
 
@@ -18,8 +18,8 @@ ChatSession::ChatSession(QTcpSocket *aSocket, QObject *aParent):
     QThread(aParent),mSocket(aSocket),mType(TCPSocketClient)
 {
     mId=QUuid::createUuid().toString();
-    connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-    connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::QueuedConnection);
+    connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()),Qt::QueuedConnection);
 }
 
 ChatSession:: ~ChatSession()

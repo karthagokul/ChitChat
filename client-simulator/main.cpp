@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include "simulatorthread.h"
 #include <QDebug>
+#include <QTimer>
 
 const int max_connections=3; //Later on may be from Command line.
 
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
     }
     int val=a.exec();
     Q_UNUSED(val);
-    for(int i=0;i<max_connections;i++)
+    for(int i=0;i<conns.count();i++)
     {
         conns[i]->exit(0);
     }

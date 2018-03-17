@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Demo Chat Client");
     connect(ui->actionNew,SIGNAL(triggered(bool)),this,SLOT(onCreateNewChatWindow()));
+    //Start with a session by default
+    onCreateNewChatWindow();
 }
 
 MainWindow::~MainWindow()

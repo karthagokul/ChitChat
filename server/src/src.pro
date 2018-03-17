@@ -1,7 +1,7 @@
 TARGET = cc-server
 QT -= gui
 
-CONFIG+=websocketsupport multicastsupport
+#CONFIG+=websocketsupport
 
 COMMON_PATH=../../common/src
 

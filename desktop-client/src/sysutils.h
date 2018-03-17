@@ -8,7 +8,6 @@ class SysUtils
 public:
     static QString getUserName();
     static QString generateRandomName();
-
 };
 
 #endif // SYSUTILS_H

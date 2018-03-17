@@ -3,6 +3,7 @@
 #include  "serverlogindialog.h"
 #include "clientconnection.h"
 #include <QDebug>
+#include <QScrollBar>
 #include <QCompleter>
 
 Widget::Widget(QWidget *parent) :
@@ -17,10 +18,20 @@ Widget::Widget(QWidget *parent) :
     connect(mConnection,SIGNAL(buddylist(QString)),this,SLOT(onBuddyList(QString)));
     connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
     connect(mConnection,SIGNAL(error(QString)),this,SLOT(onError(QString)));
+    connect(mUi->emotiWidget,SIGNAL(emojiSelected(QString)),this,SLOT(onEmojiSelected(QString)));
 
     //Lets setup the completor to the widget
     mCompletor=new QCompleter(this);
     mUi->inputTextView->setCompleter(mCompletor);
+    mUi->chatView->setStyleSheet("font: 14pt;");;
+    mUi->inputTextView->setStyleSheet("font: 14pt;");
+    mUi->inputTextView->setFontPointSize(14);
+}
+
+void Widget::onEmojiSelected(const QString &emoji)
+{
+    QString data=mUi->inputTextView->toPlainText();
+    mUi->inputTextView->setHtml(data+emoji);
 }
 
 void Widget::showLoginDialog()
@@ -75,7 +86,8 @@ void Widget::onBuddyList(QString aMessage)
 
 void  Widget::onSendButtonClick()
 {
-    QString text=mUi->inputTextView->toPlainText();
+    QString text=mUi->inputTextView->toHtml();
+    qDebug()<<text;
     if(mUi->inputTextView->autokeywords().count()==0)
     {
         qDebug()<<"Sending to alone";
@@ -84,7 +96,7 @@ void  Widget::onSendButtonClick()
     else
     {
         qDebug()<<"Sending to Buddies";
-            mConnection->sendToSelected(text,mUi->inputTextView->autokeywords());
+        mConnection->sendToSelected(text,mUi->inputTextView->autokeywords());
     }
 
     mUi->inputTextView->clear();
@@ -92,10 +104,11 @@ void  Widget::onSendButtonClick()
 
 void Widget::onNewMessage(QString aMessage,QString aSender)
 {
-    //mUi->chatView->append("\n");
-    mUi->chatView->append(aSender+":"+aMessage);
-
-}
+    QString data=mUi->chatView->toHtml().remove("\n");
+    mUi->chatView->setHtml(data+aSender+":"+aMessage);
+    //Ensure to scroll down to the latest
+    mUi->chatView->verticalScrollBar()->setValue(mUi->chatView->verticalScrollBar()->maximum());
+ }
 
 void Widget::onError(QString aMessage)
 {

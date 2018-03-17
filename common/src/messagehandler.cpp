@@ -138,29 +138,29 @@ QByteArray Message::toByteArray() const
     switch(mType)
     {
     case LogOn:
-        rootobj[COMMAND]=COMMAND_LOGON;
+        rootobj[COMMAND]=QString(COMMAND_LOGON);
         rootobj[SENDER]=mSender;
         rootobj[MESSAGE]=mMessage;
         break;
     case Chat:
-        rootobj[COMMAND]=COMMAND_CHAT;
+        rootobj[COMMAND]=QString(COMMAND_CHAT);
         rootobj[MESSAGE]=mMessage;
         rootobj[SENDER]=mSender;
         break;
     case Mention:
-        rootobj[COMMAND]=COMMAND_MENTION;
+        rootobj[COMMAND]=QString(COMMAND_MENTION);
         rootobj[MESSAGE]=mMessage;
         rootobj[SENDER]=mSender;
         rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     case Online:
-        rootobj[COMMAND]=COMMAND_ONLINE;
+        rootobj[COMMAND]=QString(COMMAND_ONLINE);
         rootobj[MESSAGE]=mMessage; //Optional Message , like a reason
         rootobj[SENDER]=mSender;
         rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);
         break;
     case LogOff:
-        rootobj[COMMAND]=COMMAND_LOGOFF;
+        rootobj[COMMAND]=QString(COMMAND_LOGOFF);
         rootobj[SENDER]=mSender;
         rootobj[MESSAGE]=mMessage;
         rootobj[BUDDIES]=QJsonArray::fromStringList(mBuddies);

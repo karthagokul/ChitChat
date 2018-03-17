@@ -29,6 +29,7 @@ protected slots:
     void onNewMessage(QString aMessage,QString aSender);
     void onSendButtonClick();
     void onError(QString aMessage);
+    void onEmojiSelected(const QString &emoji);
 
 private:
     Ui::Widget *mUi;
