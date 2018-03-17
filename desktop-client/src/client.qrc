@@ -2,4 +2,29 @@
     <qresource prefix="/style">
         <file>stylesheet.qss</file>
     </qresource>
+    <qresource prefix="/emoticons">
+        <file>res/emot/1f469-1f469-1f466-1f466.png</file>
+        <file>res/emot/1f469-2764-1f48b-1f468.png</file>
+        <file>res/emot/1f474.png</file>
+        <file>res/emot/1f475-1f3fb.png</file>
+        <file>res/emot/1f476-1f3fb.png</file>
+        <file>res/emot/1f480.png</file>
+        <file>res/emot/1f910.png</file>
+        <file>res/emot/1f911.png</file>
+        <file>res/emot/1f912.png</file>
+        <file>res/emot/1f913.png</file>
+        <file>res/emot/1f914.png</file>
+        <file>res/emot/1f915.png</file>
+        <file>res/emot/1f917.png</file>
+        <file>res/emot/1f919.png</file>
+        <file>res/emot/1f920.png</file>
+        <file>res/emot/1f923.png</file>
+        <file>res/emot/1f924.png</file>
+        <file>res/emot/1f925.png</file>
+        <file>res/emot/1f926.png</file>
+        <file>res/emot/1f926-2642.png</file>
+        <file>res/emot/1f927.png</file>
+        <file>res/emot/1f928.png</file>
+        <file>res/emot/1f929.png</file>
+    </qresource>
 </RCC>

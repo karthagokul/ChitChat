@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QCompleter>
+#include <QImageReader>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -31,8 +32,16 @@ Widget::Widget(QWidget *parent) :
 
 void Widget::onEmojiSelected(const QString &emoji)
 {
-    QString data=mUi->inputTextView->toPlainText();
-    mUi->inputTextView->setHtml(data+emoji);
+    QTextCursor cursor = mUi->inputTextView->textCursor();
+    QTextImageFormat imageFormat;
+    QImage image = QImageReader ( emoji ).read();
+    imageFormat.setWidth( image.width() );
+    imageFormat.setHeight( image.height() );
+    imageFormat.setName( emoji );
+    cursor.insertImage(imageFormat);
+
+    //QString data=mUi->inputTextView->toPlainText();
+    //mUi->inputTextView->setHtml(data+emoji);
 }
 
 void Widget::showLoginDialog()
@@ -87,12 +96,12 @@ void Widget::onBuddyList(QString aMessage)
 
 void  Widget::onSendButtonClick()
 {
-    QString text=mUi->inputTextView->toPlainText();
+    QString text=mUi->inputTextView->toHtml();
     qDebug()<<text;
     if(mUi->inputTextView->autokeywords().count()==0)
     {
         qDebug()<<"Sending to alone";
-           mConnection->send(text);
+        mConnection->send(text);
     }
     else
     {
@@ -109,7 +118,7 @@ void Widget::onNewMessage(QString aMessage,QString aSender)
     mUi->chatView->setHtml(data+aSender+":"+aMessage);
     //Ensure to scroll down to the latest
     mUi->chatView->verticalScrollBar()->setValue(mUi->chatView->verticalScrollBar()->maximum());
- }
+}
 
 void Widget::onError(QString aMessage)
 {

@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QScrollBar>
+#include <QDirIterator>
 
 EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
     QWidget(parent)
@@ -23,46 +24,29 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
     //mScrollArea->horizontalScrollBar()->setStyleSheet();
 
     containerClient->setLayout(loGrid2);
-    QStringList characters;
-    characters<<"&#9786;"<<"&#9996;"<<"&#9787;"<<"&#9785;"<<"&#9757;"<<"&#9728;"<<"&#9731;"<<"&#9734;"
-             <<"&#9788;"<<"&#9730;"<<"&#9729;"<<"&#9825;"<<"&#9835;"<<"&#9992;"<<"&#9742;";
 
-    for(int j=0;j<characters.count();j++)
-    {
-        QPushButton *pButton=getHtmlButton(characters.at(j));
-        loGrid2->addWidget(pButton);
-        mContainer->addButton(pButton);
+    QDirIterator it(":/emoticons/", QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        QString file=it.next();
+        if(file.endsWith(".png"))//We only supports png
+        {
+            QPushButton *pButton=new QPushButton(this);
+            pButton->setStyleSheet("background-color:transparent");
+            pButton->setProperty("id",file);
+            pButton->setIcon(QIcon(file));
+            loGrid2->addWidget(pButton);
+            mContainer->addButton(pButton);
+            //qDebug() << it.next();
+        }
     }
+
     mScrollArea->setWidget(containerClient);
 }
 
-QPushButton *EmotiSelectorWidget::getHtmlButton(QString text)
-{
-    QPushButton *button=new QPushButton(this);
-
-    button->setProperty("id",text);
-    //p->setText("<p>I will display &#9788;</p>");
-    QTextDocument Text;
-    Text.setHtml(text);
-
-    QFont f;
-    f.setPointSize(20);
-    Text.setDefaultFont(f);
-
-    QPixmap pixmap(Text.size().width(), Text.size().height());
-    pixmap.fill( Qt::transparent );
-    QPainter painter( &pixmap );
-    painter.setPen(QPen(QColor(255, 255, 0), 3, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-    Text.drawContents(&painter, pixmap.rect());
-
-    QIcon ButtonIcon(pixmap);
-    button->setIcon(ButtonIcon);
-    button->setIconSize(pixmap.rect().size());
-    return button;
-}
 
 void EmotiSelectorWidget::onButtonClicked(QAbstractButton *button)
 {
+    qDebug()<<"Clicked";
     QString data=button->property("id").toString();
     data=data.simplified();
     emit emojiSelected(data);
