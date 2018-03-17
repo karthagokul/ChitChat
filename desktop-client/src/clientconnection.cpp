@@ -30,7 +30,6 @@ void ClientConnection::onConnected()
     mActive=true;
     Message loginmessage(Message::LogOn,mName,QString(),QStringList());
     mSocket->write(loginmessage.toByteArray());
-    qDebug()<<loginmessage.toByteArray();
     emit stateChanged();
 }
 
@@ -90,7 +89,6 @@ void ClientConnection::onRead()
     Message readmessage(mSocket->readAll());
     switch (readmessage.type()) {
     case Message::Invalid:
-        qDebug()<<"Unsupported Message Type";
         break;
     case Message::Online:
         mBuddies=readmessage.buddies();
@@ -115,7 +113,6 @@ void ClientConnection::onRead()
     default:
         break;
     }
-
 }
 
 void ClientConnection::send(const QString &aData)

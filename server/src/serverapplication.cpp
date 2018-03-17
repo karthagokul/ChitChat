@@ -2,11 +2,16 @@
 #include "server.h"
 #include <QDebug>
 
+#include <QSharedMemory>
+
 //TODO : May be create a lock file to ensure its single existence
 ServerApplication::ServerApplication(int argc,char **argv)
     :QCoreApplication(argc,argv)
 {
     qSetMessagePattern("%{function}::%{type}->%{message}");
+}
+ServerApplication::~ServerApplication()
+{
 }
 
 int ServerApplication::start()

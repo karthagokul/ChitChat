@@ -19,6 +19,7 @@ public:
      * \param argv Command line args
      */
     ServerApplication(int argc,char **argv);
+    ~ServerApplication();
     /*!
      * \brief start Application Server Starts
      * \return Exit Value

@@ -9,9 +9,14 @@ class SimulatorThread:public QThread
     Q_OBJECT
 private:
     ClientConnection *mCon;
+    bool mEchoMessage;
 public:
     SimulatorThread(QObject *aParent);
     virtual ~SimulatorThread();
+    void setEchoClient(bool aVal)
+    {
+        mEchoMessage=aVal;
+    }
 protected:
     void run();
 protected slots:

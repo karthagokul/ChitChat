@@ -26,6 +26,10 @@ public:
         return mBuddies;
     }
 
+    QString name()
+    {
+        return mName;
+    }
 signals:
     void stateChanged();
     void buddylist(QString aMessage);

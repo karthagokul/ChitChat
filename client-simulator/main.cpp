@@ -1,11 +1,14 @@
 #include <QCoreApplication>
 #include "simulatorthread.h"
+#include <QDebug>
 
-const int max_connections=10; //Later on may be from Command line.
+const int max_connections=3; //Later on may be from Command line.
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    qDebug()<<"Simulator is starting up with "<<max_connections;
+    //qSetMessagePattern("%{function}::%{type}->%{message}");
     QList<SimulatorThread*> conns;
     for(int i=0;i<max_connections;i++)
     {

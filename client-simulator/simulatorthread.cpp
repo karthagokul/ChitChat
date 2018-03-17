@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 
 SimulatorThread::SimulatorThread(QObject *aParent):QThread(aParent)
+  ,mEchoMessage(true)
 {
     mCon=new ClientConnection(aParent);
     connect(mCon,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)),Qt::DirectConnection);
@@ -19,7 +20,12 @@ SimulatorThread::~SimulatorThread()
 }
 void SimulatorThread::onNewMessage(QString message,QString sender)
 {
-     qDebug()<<"["<<sender<<"] : "<<message;
+     qDebug()<<"["<<mCon->name()<<"]->"<<"["<<sender<<"] : "<<message;
+     if(mEchoMessage && (sender!=mCon->name()))
+     {
+         mCon->send(message);
+         sleep(1);
+     }
 }
 void SimulatorThread::run()
 {
