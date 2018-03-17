@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionNew,SIGNAL(triggered(bool)),this,SLOT(onCreateNewChatWindow()));
     //Start with a session by default
     onCreateNewChatWindow();
+    setFixedSize(size());
 }
 
 MainWindow::~MainWindow()

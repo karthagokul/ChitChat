@@ -28,6 +28,7 @@ Widget::Widget(QWidget *parent) :
     mUi->inputTextView->setFontPointSize(14);
 }
 
+
 void Widget::onEmojiSelected(const QString &emoji)
 {
     QString data=mUi->inputTextView->toPlainText();
@@ -86,7 +87,7 @@ void Widget::onBuddyList(QString aMessage)
 
 void  Widget::onSendButtonClick()
 {
-    QString text=mUi->inputTextView->toHtml();
+    QString text=mUi->inputTextView->toPlainText();
     qDebug()<<text;
     if(mUi->inputTextView->autokeywords().count()==0)
     {

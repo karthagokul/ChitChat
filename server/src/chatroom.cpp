@@ -35,7 +35,7 @@ void ChatRoom::sendPrivateMessage(const Message &aMessage,const QString&sessionI
         i.next();
         if(i.value()->name() ==aMessage.sender() || aMessage.buddies().contains(i.value()->name()))
         {
-            qDebug()<<"Sendint to "<<i.value()->name();
+            qDebug()<<"Sending to "<<i.value()->name();
             i.value()->write(aMessage.toByteArray());
         }
     }

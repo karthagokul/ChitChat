@@ -29,7 +29,7 @@ public:
     /*!
      * \brief The MessageType enum
      */
-    enum MessageType{Invalid=1,Chat,Mention,Online,LogOn,LogOff};
+    enum MessageType{Invalid=1,Chat,Mention,Online,LogOn,LogOff,WhiteBoard};
 private:
     MessageType mType;
     QStringList mBuddies;
@@ -97,6 +97,7 @@ public:
         return mSender;
     }
 };
+
 
 
 /*

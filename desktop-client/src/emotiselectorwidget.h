@@ -23,6 +23,7 @@ private slots:
 private:
     QButtonGroup *mContainer;
     QScrollArea *mScrollArea;
+    QWidget *containerClient;
 };
 
 #endif // EMOTISELECTORWIDGET_H

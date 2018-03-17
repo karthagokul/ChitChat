@@ -43,9 +43,10 @@ HEADERS  += widget.h \
     chatinputtext.h \
     emotiselectorwidget.h
 
-FORMS    += widget.ui \
+FORMS    += \
     serverlogindialog.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    widget.ui
 
 RESOURCES += \
     client.qrc

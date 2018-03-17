@@ -20,8 +20,8 @@ public:
     }
 
 protected:
-    void keyPressEvent(QKeyEvent *e) override;
-    void focusInEvent(QFocusEvent *e) override;
+    void keyPressEvent(QKeyEvent *e);
+    void focusInEvent(QFocusEvent *e);
 
 private slots:
     void insertCompletion(const QString &completion);

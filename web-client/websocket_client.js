@@ -19,6 +19,8 @@ function onMessage(e) {
     var obj = JSON && JSON.parse(e.data) || $.parseJSON(jse.dataon);
     if (obj.command == "chat") {
         writeToScreen('<span style="color: blue;"> ' + '<b></span><span style="color: black;">' + obj.sender + '</b>:' + obj.message + '</span>');
+    }else if (obj.command == "mention") {
+        writeToScreen('<span style="color: blue;"> ' + '<b></span><span style="color: black;">' + obj.sender + '</b>:' + obj.message + '</span>');
     } else if (obj.command == "online") {
         //writeToScreen('<span style="color: blue;">online status changed</span>');
         updateBuddies(obj);

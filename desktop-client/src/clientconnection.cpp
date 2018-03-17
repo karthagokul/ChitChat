@@ -2,7 +2,6 @@
 #include "clientconnection.h"
 #include "messagehandler.h"
 #include "sysutils.h"
-
 ClientConnection::ClientConnection(QObject *parent) :
     QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false)
 {

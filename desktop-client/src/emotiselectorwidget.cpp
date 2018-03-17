@@ -12,8 +12,8 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
 {
     mContainer=new QButtonGroup(this);
     connect(mContainer,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(onButtonClicked(QAbstractButton*)));
-    QWidget *client = new QWidget(this); //creates a new widget which has "this" as its parent, meaning it will be deleted if "this" is destroyed
-    QHBoxLayout *loGrid2 = new QHBoxLayout(client);
+    containerClient= new QWidget(this); //creates a new widget which has "this" as its parent, meaning it will be deleted if "this" is destroyed
+    QHBoxLayout *loGrid2 = new QHBoxLayout(containerClient);
     mScrollArea=new QScrollArea(this);
    // mScrollArea->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
    // mScrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
@@ -22,7 +22,7 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
     mScrollArea->setWidgetResizable( true );
     //mScrollArea->horizontalScrollBar()->setStyleSheet();
 
-    client->setLayout(loGrid2);
+    containerClient->setLayout(loGrid2);
     QStringList characters;
     characters<<"&#9786;"<<"&#9996;"<<"&#9787;"<<"&#9785;"<<"&#9757;"<<"&#9728;"<<"&#9731;"<<"&#9734;"
              <<"&#9788;"<<"&#9730;"<<"&#9729;"<<"&#9825;"<<"&#9835;"<<"&#9992;"<<"&#9742;";
@@ -33,7 +33,7 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
         loGrid2->addWidget(pButton);
         mContainer->addButton(pButton);
     }
-    mScrollArea->setWidget(client);
+    mScrollArea->setWidget(containerClient);
 }
 
 QPushButton *EmotiSelectorWidget::getHtmlButton(QString text)
@@ -70,5 +70,6 @@ void EmotiSelectorWidget::onButtonClicked(QAbstractButton *button)
 
 void EmotiSelectorWidget::resizeEvent(QResizeEvent *event)
 {
+    containerClient->resize(size());
     mScrollArea->resize(size());
 }

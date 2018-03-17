@@ -3,6 +3,7 @@
 
 #include <QTcpSocket>
 #include <QtNetwork>
+#include <QThread>
 
 class ClientConnection : public QObject
 {
