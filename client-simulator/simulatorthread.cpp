@@ -14,9 +14,9 @@ SimulatorThread::SimulatorThread(QObject *aParent):QThread(aParent)
     mCon->setServer("127.0.0.1",8080); //Later on from command line parsing .
     mCon->setUserName(SysUtils::generateRandomName());
     mCon->connectNow();
-    QTimer *timer=new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(onEchoMessage()));
-    timer->start(9000);
+    mTimer=new QTimer(this);
+    connect(mTimer,SIGNAL(timeout()),this,SLOT(onEchoMessage()));
+    mTimer->start(4000);
     mCon->start();
 }
 
@@ -31,18 +31,22 @@ void SimulatorThread::onEchoMessage()
 
 SimulatorThread::~SimulatorThread()
 {
-    mCon->disconnectFromServer();
+   mCon->disconnectFromServer();
+   mCon->terminate();
 }
+
 void SimulatorThread::onNewMessage(QString message,QString sender)
 {
     qDebug()<<"["<<mCon->name()<<"]->"<<"["<<sender<<"] : "<<message;
 }
+
 void SimulatorThread::run()
 {
     exec();
 }
+
 void SimulatorThread::onError(QString aMessage)
 {
     qCritical()<<aMessage;
-    qApp->quit();
+    //mTimer->stop();
 }

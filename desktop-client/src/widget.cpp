@@ -80,6 +80,8 @@ void Widget::onSessionStateChanged()
     {
         mUi->logonButton->setText("Log On");
         mUi->sendButton->setEnabled(false);
+
+        onNewMessage("There is no Active Connection","System",false);
     }
 }
 
@@ -157,5 +159,5 @@ void Widget::onError(QString aMessage)
 Widget::~Widget()
 {
     mConnection->disconnectFromServer();
-    mConnection->deleteLater();
+    mConnection->terminate();
 }

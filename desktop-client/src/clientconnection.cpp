@@ -158,10 +158,6 @@ void ClientConnection::sendToSelected(const QString &aData,const QStringList &aS
 
 ClientConnection::~ClientConnection()
 {
-    if(mSocket)
-    {
-        delete mSocket;
-        mSocket=0;
-    }
+    //mSocket->deleteLater();
 }
 

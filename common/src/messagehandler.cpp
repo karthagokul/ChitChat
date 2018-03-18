@@ -51,6 +51,7 @@ bool Message::jsonObjectToString(QJsonObject &aObject,QString aID,QString &aStri
 
 Message::Message(const QByteArray &aData):QObject(0)
 {
+    qDebug()<<aData;
     QJsonDocument d = QJsonDocument::fromJson(aData);
     if(d.isNull())
     {

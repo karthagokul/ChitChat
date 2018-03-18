@@ -36,7 +36,6 @@ void SimulatorApp::onTimeOut()
         mConnPool[i]->deleteLater();
     }
     mConnPool.clear();
-    mConns=qrand() % MAX_CONN;
     for(int i=0;i<mConns;i++)
     {
         SimulatorThread *s=new SimulatorThread(this);

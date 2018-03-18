@@ -22,7 +22,7 @@ function onMessage(e) {
     if (obj.command == "chat") {
         writeToScreen('<span style="color: blue;"> ' + '<b></span><span style="color: black;">' + obj.sender + '</b>:' + message + '</span>');
     }else if (obj.command == "mention") {
-        writeToScreen('<span style="color: blue;"> ' + '<b></span><span style="color: black;">' + obj.sender + '</b>:' + obj.message + '</span>');
+        writeToScreen('<span style="color: blue;"> ' + '<b></span><span style="color: black;">' + obj.sender + '</b>:' + message + '</span>');
     } else if (obj.command == "online") {
         //writeToScreen('<span style="color: blue;">online status changed</span>');
         updateBuddies(obj);
@@ -37,6 +37,12 @@ function onMessage(e) {
         // ToDo : Fix me
         updateBuddies(obj);
     }
+	scrollToBottom("chatbox");
+}
+
+function scrollToBottom(id){
+   var div = document.getElementById(id);
+   div.scrollTop = div.scrollHeight - div.clientHeight;
 }
 
 function updateBuddies(obj) {

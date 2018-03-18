@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QStringList>
 #include <QMutex>
+#include <QTimer>
 
 class ClientConnection;
 class SimulatorThread:public QThread
@@ -13,6 +14,7 @@ private:
     ClientConnection *mCon;
     QStringList mFortunes;
     QMutex mMutex;
+    QTimer *mTimer;
 public:
     SimulatorThread(QObject *aParent);
     virtual ~SimulatorThread();

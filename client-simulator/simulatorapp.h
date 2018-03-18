@@ -4,7 +4,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include "simulatorthread.h"
-#define MAX_CONN 10
+#define MAX_CONN 1
 
 class SimulatorApp:public QCoreApplication
 {

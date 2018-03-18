@@ -3,9 +3,7 @@
         <file>stylesheet.qss</file>
     </qresource>
     <qresource prefix="/emoticons">
-        <file>res/emot/1f469-1f469-1f466-1f466.png</file>
-        <file>res/emot/1f469-2764-1f48b-1f468.png</file>
-        <file>res/emot/1f474.png</file>
+       <file>res/emot/1f474.png</file>
         <file>res/emot/1f475-1f3fb.png</file>
         <file>res/emot/1f476-1f3fb.png</file>
         <file>res/emot/1f480.png</file>
