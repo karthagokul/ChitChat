@@ -3,13 +3,13 @@
 #include "messagehandler.h"
 #include "sysutils.h"
 ClientConnection::ClientConnection(QObject *parent) :
-    QObject(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false)
+    QThread(parent),mSocket(new QTcpSocket(this)),mHostIp("127.0.0.1"),mPort(8080),mActive(false)
 {
     //mName(getRandomName());
     mName=SysUtils::getUserName();
-    connect(mSocket,SIGNAL(readyRead()),this,SLOT(onRead()));
-    connect(mSocket,SIGNAL(connected()),this,SLOT(onConnected()));
-    connect(mSocket,SIGNAL(disconnected()),this,SLOT(onDisconnected()));
+    connect(mSocket,SIGNAL(readyRead()),this,SLOT(onRead()),Qt::QueuedConnection);
+    connect(mSocket,SIGNAL(connected()),this,SLOT(onConnected()),Qt::QueuedConnection);
+    connect(mSocket,SIGNAL(disconnected()),this,SLOT(onDisconnected()),Qt::QueuedConnection);
     connect(mSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(onError(QAbstractSocket::SocketError)));
 }
 
@@ -37,16 +37,15 @@ void ClientConnection::onDisconnected()
     mActive=false;
     emit stateChanged();
 }
-
-void ClientConnection::start()
+void ClientConnection::connectNow()
 {
-    qDebug()<<"Connecting to Server";
-    if(isActive())
-    {
-        qDebug()<<"Already Have an Active Session";
-        return;
-    }
     mSocket->connectToHost(mHostIp,mPort);
+}
+
+void ClientConnection::run()
+{
+    exec();
+    return;
 }
 
 void ClientConnection::onError(QAbstractSocket::SocketError aError)
@@ -69,7 +68,7 @@ void ClientConnection::onError(QAbstractSocket::SocketError aError)
     emit stateChanged();
 }
 
-void ClientConnection::stop()
+void ClientConnection::disconnectFromServer()
 {
     qDebug()<<"Disconnecting from Server";
     if(!isActive())
@@ -87,31 +86,43 @@ void ClientConnection::stop()
 
 void ClientConnection::onRead()
 {
-    //qDebug()<<"On Server Message";
     Message readmessage(mSocket->readAll());
     switch (readmessage.type()) {
     case Message::Invalid:
         break;
     case Message::Online:
+        //qDebug()<<"Logon"<<readmessage.buddies();
         mBuddies=readmessage.buddies();
         emit buddylist(readmessage.message());
         break;
     case Message::LogOff:
         //Log off Notification from Other Client, Lets update the latest buddies
+        qDebug()<<"Logoff"<<readmessage.buddies();
         mBuddies=readmessage.buddies();
+        emit newMessage(readmessage.message(),"Server");
         emit buddylist(readmessage.message());
         break;
     case Message::Chat:
-    case Message::Mention:
+        qDebug()<<mName<<"> "<<readmessage.sender()<<"::"<<readmessage.message();
         if(readmessage.sender()==mName)
         {
-            emit newMessage(readmessage.message(),"You");
+            emit newMessage(readmessage.message(),"You",false);
         }
         else
         {
-            emit newMessage(readmessage.message(),readmessage.sender());
+            emit newMessage(readmessage.message(),readmessage.sender(),false);
         }
-
+    break;
+    case Message::Mention:
+        if(readmessage.sender()==mName)
+        {
+            emit newMessage(readmessage.message(),"You",true);
+        }
+        else
+        {
+            emit newMessage(readmessage.message(),readmessage.sender(),true);
+        }
+    break;
     default:
         break;
     }
@@ -127,6 +138,10 @@ void ClientConnection::send(const QString &aData)
 
     Message newMessage(Message::Chat,mName,aData,QStringList());
     mSocket->write(newMessage.toByteArray());
+    if(!mSocket->waitForBytesWritten())
+    {
+        qCritical()<<"Unable to Wait for Data Sending";
+    }
 }
 
 void ClientConnection::sendToSelected(const QString &aData,const QStringList &aSelectedBuddies)

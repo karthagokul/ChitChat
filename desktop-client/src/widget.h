@@ -26,7 +26,7 @@ protected slots:
     void onLogonButtonClick();
     void onSessionStateChanged();
     void onBuddyList(QString);
-    void onNewMessage(QString aMessage,QString aSender);
+    void onNewMessage(QString aMessage,QString aSender,bool emphasise);
     void onSendButtonClick();
     void onError(QString aMessage);
     void onEmojiSelected(const QString &emoji);

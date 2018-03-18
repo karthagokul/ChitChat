@@ -16,6 +16,7 @@ public:
     ~MainWindow();
 public slots:
     void onCreateNewChatWindow();
+    void onCloseTab(int id);
 private:
     Ui::MainWindow *ui;
 };

@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QScrollBar>
 #include <QDirIterator>
+#include <QToolButton>
 
 EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
     QWidget(parent)
@@ -14,29 +15,34 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
     mContainer=new QButtonGroup(this);
     connect(mContainer,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(onButtonClicked(QAbstractButton*)));
     containerClient= new QWidget(this); //creates a new widget which has "this" as its parent, meaning it will be deleted if "this" is destroyed
-    QHBoxLayout *loGrid2 = new QHBoxLayout(containerClient);
+    QGridLayout *loGrid2 = new QGridLayout(containerClient);
+    setStyleSheet("background-color:white;");
     mScrollArea=new QScrollArea(this);
-   // mScrollArea->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-   // mScrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     mScrollArea->setGeometry( geometry() );
-
-    mScrollArea->setWidgetResizable( true );
-    //mScrollArea->horizontalScrollBar()->setStyleSheet();
-
+    mScrollArea->setWidgetResizable( false );
     containerClient->setLayout(loGrid2);
-
+    loGrid2->setSpacing(0);
+    loGrid2->setMargin(0);
     QDirIterator it(":/emoticons/", QDirIterator::Subdirectories);
+    int i=0;
+    int j=1;
     while (it.hasNext()) {
         QString file=it.next();
         if(file.endsWith(".png"))//We only supports png
         {
-            QPushButton *pButton=new QPushButton(this);
-            pButton->setStyleSheet("background-color:transparent");
+            QToolButton *pButton=new QToolButton(this);
+            pButton->setFixedSize(QSize(32,32));
             pButton->setProperty("id",file);
-            pButton->setIcon(QIcon(file));
-            loGrid2->addWidget(pButton);
+            QString bgImage=QString("border-image:url(")+file+QString(");");
+            pButton->setStyleSheet(bgImage);
+            loGrid2->addWidget(pButton,j,i);
+            i++;
+            if(i==10)
+            {
+                i=0;
+                j++;
+            }
             mContainer->addButton(pButton);
-            //qDebug() << it.next();
         }
     }
 
@@ -54,6 +60,6 @@ void EmotiSelectorWidget::onButtonClicked(QAbstractButton *button)
 
 void EmotiSelectorWidget::resizeEvent(QResizeEvent *event)
 {
-    containerClient->resize(size());
+   // containerClient->resize(size());
     mScrollArea->resize(size());
 }

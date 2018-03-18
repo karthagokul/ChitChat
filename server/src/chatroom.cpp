@@ -1,7 +1,7 @@
 #include "chatroom.h"
 #include "chatsession.h"
 #include "messagehandler.h"
-
+#include <QTimer>
 
 ChatRoom::ChatRoom(QObject *aParent)
     :QObject(aParent)
@@ -29,7 +29,7 @@ void  ChatRoom::broadcastMessage(const Message &aMessage,const QString&sessionId
 }
 void ChatRoom::sendPrivateMessage(const Message &aMessage,const QString&sessionId)
 {
-    qDebug()<<"Private Message";
+    //qDebug()<<"Private Message";
     QMapIterator<QString,ChatSession*> i(mOnlineClients);
     while (i.hasNext()) {
         i.next();
@@ -43,7 +43,7 @@ void ChatRoom::sendPrivateMessage(const Message &aMessage,const QString&sessionI
 void ChatRoom::onMessageRequest(const Message &aMessage,const QString&sessionId)
 {
     Q_UNUSED(sessionId);
-    qDebug()<<aMessage.buddies();
+   // qDebug()<<aMessage.buddies();
     if(aMessage.type()==Message::Mention)
     {
         sendPrivateMessage(aMessage,QString());
@@ -69,6 +69,7 @@ QStringList ChatRoom::getBuddies(const QString&sessionId)
             buddies<<i.value()->name();
         }
     }
+    qDebug()<<"Buddies"<<buddies;
     return buddies;
 }
 
@@ -79,6 +80,7 @@ void ChatRoom::closeAllSessions()
 
 void ChatRoom::onClientDisConnection(const QString&sessionId)
 {
+    qDebug()<<"Disconncted";
     //Lets Remove the Online Client from Chatroom
     QString signOffUser;
     QMapIterator<QString,ChatSession*> i(mOnlineClients);
@@ -92,8 +94,16 @@ void ChatRoom::onClientDisConnection(const QString&sessionId)
     }
 
     Message logOffMessage(Message::LogOff,QString(),signOffUser+QString(" Left the Room"),\
-                          getBuddies(sessionId));
+                          getBuddies());
     broadcastMessage(logOffMessage);
+
+    //Litle delay to Fix List of buddies bug .
+    QTimer::singleShot(300, this, SLOT(sendLogOffMessage()));
+}
+void ChatRoom::sendLogOffMessage()
+{
+    Message onLineMessage(Message::Online,QString(),QString(),getBuddies());
+    broadcastMessage(onLineMessage);
 }
 
 void ChatRoom::registerSession(ChatSession *session)

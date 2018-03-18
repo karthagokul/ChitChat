@@ -6,27 +6,31 @@
 #include <QScrollBar>
 #include <QCompleter>
 #include <QImageReader>
+#include<QTextBlockFormat>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     mUi(new Ui::Widget),mConnection(new ClientConnection(this))
 {
+    setAttribute( Qt::WA_DeleteOnClose, true );
     mUi->setupUi(this);
     connect(mUi->settingsButton,SIGNAL(clicked(bool)),this,SLOT(showLoginDialog()));
     connect(mUi->logonButton,SIGNAL(clicked(bool)),this,SLOT(onLogonButtonClick()));
     connect(mUi->sendButton,SIGNAL(clicked(bool)),this,SLOT(onSendButtonClick()));
     connect(mConnection,SIGNAL(stateChanged()),this,SLOT(onSessionStateChanged()));
     connect(mConnection,SIGNAL(buddylist(QString)),this,SLOT(onBuddyList(QString)));
-    connect(mConnection,SIGNAL(newMessage(QString,QString)),this,SLOT(onNewMessage(QString,QString)));
+    connect(mConnection,SIGNAL(newMessage(QString,QString,bool)),this,SLOT(onNewMessage(QString,QString,bool)));
     connect(mConnection,SIGNAL(error(QString)),this,SLOT(onError(QString)));
     connect(mUi->emotiWidget,SIGNAL(emojiSelected(QString)),this,SLOT(onEmojiSelected(QString)));
 
     //Lets setup the completor to the widget
     mCompletor=new QCompleter(this);
     mUi->inputTextView->setCompleter(mCompletor);
-    mUi->chatView->setStyleSheet("font: 14pt;");;
-    mUi->inputTextView->setStyleSheet("font: 14pt;");
-    mUi->inputTextView->setFontPointSize(14);
+
+    //Disable send button until connected.
+    mUi->sendButton->setEnabled(true);
+
+    mUi->chatView->setReadOnly(true);
 }
 
 
@@ -39,9 +43,6 @@ void Widget::onEmojiSelected(const QString &emoji)
     imageFormat.setHeight( image.height() );
     imageFormat.setName( emoji );
     cursor.insertImage(imageFormat);
-
-    //QString data=mUi->inputTextView->toPlainText();
-    //mUi->inputTextView->setHtml(data+emoji);
 }
 
 void Widget::showLoginDialog()
@@ -55,13 +56,14 @@ void Widget::onLogonButtonClick()
 {
     if(mConnection->isActive())
     {
-        mConnection->stop();
+        mConnection->disconnectFromServer();
         //Clear the List of Users
         mBuddyListModel.setStringList(QStringList());
         mUi->buddyListView->setModel(&mBuddyListModel);
     }
     else
     {
+        mConnection->connectNow();
         mConnection->start();
     }
 }
@@ -90,7 +92,9 @@ void Widget::onBuddyList(QString aMessage)
 {
     mBuddyListModel.setStringList(mConnection->buddies());
     mUi->buddyListView->setModel(&mBuddyListModel);
-    mUi->chatView->append(aMessage);
+    if(!aMessage.isEmpty())
+        onNewMessage(aMessage,"System",false);
+
     mCompletor->setModel(&mBuddyListModel);
 }
 
@@ -112,21 +116,39 @@ void  Widget::onSendButtonClick()
     mUi->inputTextView->clear();
 }
 
-void Widget::onNewMessage(QString aMessage,QString aSender)
+void Widget::onNewMessage(QString aMessage,QString aSender,bool emphasise)
 {
-    QString data=mUi->chatView->toHtml().remove("\n");
-    mUi->chatView->setHtml(data+aSender+":"+aMessage);
+    QString senderText;
+    if(emphasise)
+    {
+        aSender=aSender.append("[Privately]->:");
+        senderText=QString("<p2 style=' font-weight: bold;color:red;'>")+aSender+QString("</p2>");
+    }
+    else
+    {
+        aSender=aSender.append(" : ");
+        senderText=QString("<p2 style=' font-weight: bold;color:blue;'>")+aSender+QString("</p2>");
+    }
+
+    QTextCursor cursor = mUi->chatView->textCursor();
+    QTextBlockFormat format;
+    format.setBackground(Qt::transparent);
+    cursor.setBlockFormat(format);
+    cursor.insertHtml(senderText);
+    cursor.insertHtml(aMessage);
+    cursor.insertHtml("<br>");
+
     //Ensure to scroll down to the latest
     mUi->chatView->verticalScrollBar()->setValue(mUi->chatView->verticalScrollBar()->maximum());
 }
 
 void Widget::onError(QString aMessage)
 {
-    mUi->chatView->append("Error:"+aMessage);
+    //mUi->chatView->append("Error:"+aMessage);
 }
 
 Widget::~Widget()
 {
-    delete mConnection;
-    delete mUi;
+    mConnection->disconnectFromServer();
+    mConnection->deleteLater();
 }

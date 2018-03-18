@@ -33,7 +33,7 @@ private:
      * \param sessionId
      * \return
      */
-    QStringList getBuddies(const QString &sessionId);
+    QStringList getBuddies(const QString &sessionId=QString());
     /*!
      * \brief broadcastMessage
      * \param aMessage
@@ -66,6 +66,11 @@ protected slots:
      * \param sessionId
      */
     void onMessageRequest(const Message &aMessage,const QString&sessionId);
+
+    /*!
+     * \brief sendLogOffMessage Adding a little delay for synchronisation
+     */
+    void sendLogOffMessage();
 private:
     QMap<QString,ChatSession*> mOnlineClients;
 };

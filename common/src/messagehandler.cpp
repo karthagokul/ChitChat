@@ -54,7 +54,7 @@ Message::Message(const QByteArray &aData):QObject(0)
     QJsonDocument d = QJsonDocument::fromJson(aData);
     if(d.isNull())
     {
-        //qCritical()<<"Unable to Parse the Protocol";
+        qCritical()<<"Unable to Parse the Protocol";
         mType=Invalid;
     }
     else

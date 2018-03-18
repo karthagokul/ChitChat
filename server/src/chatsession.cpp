@@ -28,7 +28,7 @@ ChatSession:: ~ChatSession()
 
 void ChatSession::run()
 {
-    qDebug()<<Q_FUNC_INFO;
+    //qDebug()<<Q_FUNC_INFO;
     exec();
 }
 
@@ -52,7 +52,7 @@ void ChatSession::readyRead()
 
 void ChatSession::onClientRead(QByteArray data)
 {
-    qDebug()<<data;
+    //qDebug()<<data;
     Message newMessage(data);
     switch (newMessage.type())
     {
@@ -65,11 +65,11 @@ void ChatSession::onClientRead(QByteArray data)
         emit loggedin(newMessage,id());
         break;
     case Message::Chat:
-        qDebug()<<"chat";
+        //qDebug()<<"chat";
         emit newmessage(newMessage,id());
         break;
     case Message::Mention:
-        qDebug()<<"Private Message";
+       // qDebug()<<"Private Message";
         emit newmessage(newMessage,id());
     default:
         break;

@@ -5,7 +5,7 @@
 #include <QtNetwork>
 #include <QThread>
 
-class ClientConnection : public QObject
+class ClientConnection : public QThread
 {
     Q_OBJECT
 public:
@@ -13,8 +13,9 @@ public:
     virtual ~ClientConnection();
     void setServer(QString aHostName,int aPort);
     void setUserName(QString aName);
-    void stop();
-    void start();
+    void run();
+    void connectNow();
+    void disconnectFromServer();
     void send(const QString &aData);
     void sendToSelected(const QString &aData,const QStringList &aSelectedBuddies);
     bool isActive()
@@ -35,7 +36,7 @@ signals:
     void stateChanged();
     void buddylist(QString aMessage);
     //need to change the below logic
-    void newMessage(QString message,QString sender);
+    void newMessage(QString message,QString sender,bool emphasise=false);
     void error(QString aMessage);
 
 protected slots:

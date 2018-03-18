@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>714</width>
-    <height>492</height>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
      <x>10</x>
      <y>10</y>
      <width>481</width>
-     <height>271</height>
+     <height>411</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -55,10 +55,10 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="sendButton">
    <property name="geometry">
     <rect>
-     <x>570</x>
-     <y>400</y>
-     <width>91</width>
-     <height>51</height>
+     <x>510</x>
+     <y>440</y>
+     <width>181</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -75,8 +75,8 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>400</y>
-     <width>551</width>
+     <y>430</y>
+     <width>481</width>
      <height>61</height>
     </rect>
    </property>
@@ -90,10 +90,10 @@ p, li { white-space: pre-wrap; }
   <widget class="EmotiSelectorWidget" name="emotiWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>290</y>
-     <width>531</width>
-     <height>91</height>
+     <x>510</x>
+     <y>300</y>
+     <width>191</width>
+     <height>121</height>
     </rect>
    </property>
   </widget>

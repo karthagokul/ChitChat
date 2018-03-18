@@ -20,9 +20,11 @@ SOURCES += main.cpp\
     $${COMMON_PATH}/messagehandler.cpp \
     ../desktop-client/src/clientconnection.cpp \
     ../desktop-client/src/sysutils.cpp \
-    simulatorthread.cpp
+    simulatorthread.cpp \
+    simulatorapp.cpp
 
 HEADERS  += $${COMMON_PATH}/messagehandler.h \
     ../desktop-client/src/clientconnection.h \
     ../desktop-client/src/sysutils.h \
-    simulatorthread.h
+    simulatorthread.h \
+    simulatorapp.h
