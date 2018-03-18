@@ -123,12 +123,18 @@ void Widget::onNewMessage(QString aMessage,QString aSender,bool emphasise)
     if(emphasise)
     {
         aSender=aSender.append("[Privately]->:");
-        senderText=QString("<p2 style=' font-weight: bold;color:red;'>")+aSender+QString("</p2>");
+        senderText=QString("<p2 style=' font-weight: bold;color:red;'>") + \
+                QDateTime::currentDateTime().toString("hh:mm:ss") + \
+                QString(" ") + \
+                aSender+QString("</p2>");
     }
     else
     {
         aSender=aSender.append(" : ");
-        senderText=QString("<p2 style=' font-weight: bold;color:blue;'>")+aSender+QString("</p2>");
+        senderText=QString("<p2 style=' font-weight: bold;color:blue;'>")+ \
+                QDateTime::currentDateTime().toString("hh:mm:ss") + \
+                QString(" ") + \
+                aSender+QString("</p2>");
     }
 
     QTextCursor cursor = mUi->chatView->textCursor();
