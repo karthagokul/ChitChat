@@ -6,7 +6,6 @@
 int main(int argc, char *argv[])
 {
     SimulatorApp a(argc, argv);
-    a.setMaxConnections(1);
     a.start();
     int val=a.exec();
     Q_UNUSED(val);

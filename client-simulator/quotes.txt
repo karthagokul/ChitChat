@@ -1,0 +1,20 @@
+Fools ignore complexity. Pragmatists suffer it. Some can avoid it. Geniuses remove it.
+Within a computer natural language is unnatural.
+A year spent in artificial intelligence is enough to make one believe in God
+A little learning is a dangerous thing.
+There really is no learning without doing.
+Lisp programmers know the value of everything but the cost of nothing.
+Everything should be made as simple as possible, but no simpler.
+All non-trivial abstractions, to some degree, are leaky.
+XML wasn't designed to be edited by humans on a regular basis.
+You can have premature generalization as well as premature optimization.
+Omit needless words.
+Simplicity takes effort-- genius, even.
+In God I trust; I will not be afraid. What can mortal man do to me?
+Ce n'est que par les relations qu'on entretient entre nos différentes connaissances qu'elles nous restent accessibles.
+The programmer must seek both perfection of part and adequacy of collection.
+Thus, programs must be written for people to read, and only incidentally for machines to execute.
+It is said that the real winner is the one who lives in today but able to see tomorrow.
+Don't worry about what anybody else is going to do. The best way to predict the future is to invent it.
+Premature optimization is the root of all evil (or at least most of it) in programming.
+Keep away from people who try to belittle your ambitions. Small people always do that, but the really great make you feel that you, too, can become great.

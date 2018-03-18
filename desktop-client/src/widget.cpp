@@ -31,6 +31,7 @@ Widget::Widget(QWidget *parent) :
     mUi->sendButton->setEnabled(true);
 
     mUi->chatView->setReadOnly(true);
+    mUi->chatView->setTextInteractionFlags(Qt::NoTextInteraction);
 }
 
 

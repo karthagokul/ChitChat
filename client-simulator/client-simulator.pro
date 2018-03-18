@@ -28,3 +28,6 @@ HEADERS  += $${COMMON_PATH}/messagehandler.h \
     ../desktop-client/src/sysutils.h \
     simulatorthread.h \
     simulatorapp.h
+
+RESOURCES += \
+    res.qrc

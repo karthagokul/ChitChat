@@ -11,16 +11,16 @@ class SimulatorThread:public QThread
     Q_OBJECT
 private:
     ClientConnection *mCon;
-    bool mEchoMessage;
     QStringList mFortunes;
     QMutex mMutex;
 public:
     SimulatorThread(QObject *aParent);
     virtual ~SimulatorThread();
-    void setEchoClient(bool aVal)
+    void setData(QStringList aForturnes)
     {
-        mEchoMessage=aVal;
+        mFortunes=aForturnes;
     }
+
 protected:
     void run();
 protected slots:

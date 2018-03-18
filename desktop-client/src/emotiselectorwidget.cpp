@@ -37,7 +37,7 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
             pButton->setStyleSheet(bgImage);
             loGrid2->addWidget(pButton,j,i);
             i++;
-            if(i==10)
+            if(i==8)
             {
                 i=0;
                 j++;

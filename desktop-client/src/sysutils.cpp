@@ -21,6 +21,6 @@ QString SysUtils::generateRandomName()
             <<  QString("Ahmed")
              <<  QString("Williams")
               << QString("Adney")
-              << QString("Lam");
+              << QString("Raj");
     return names.at(qrand() % names.size());
 }
