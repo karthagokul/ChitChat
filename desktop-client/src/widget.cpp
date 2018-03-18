@@ -107,12 +107,12 @@ void  Widget::onSendButtonClick()
     qDebug()<<text;
     if(mUi->inputTextView->autokeywords().count()==0)
     {
-        qDebug()<<"Sending to alone";
+        //qDebug()<<"Sending to alone";
         mConnection->send(text);
     }
     else
     {
-        qDebug()<<"Sending to Buddies";
+        //qDebug()<<"Sending to Buddies";
         mConnection->sendToSelected(text,mUi->inputTextView->autokeywords());
     }
 

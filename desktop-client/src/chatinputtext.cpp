@@ -90,7 +90,7 @@ void ChatInputText::keyPressEvent(QKeyEvent *e)
     //reset if there is any mentions
     if(toPlainText()==QString())
     {
-        qDebug()<<"Text Editor is Empty";
+        //qDebug()<<"Text Editor is Empty";
         mAutoKeywords.clear();
     }
 
