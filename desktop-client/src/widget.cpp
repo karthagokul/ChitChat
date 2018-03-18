@@ -159,5 +159,7 @@ void Widget::onError(QString aMessage)
 Widget::~Widget()
 {
     mConnection->disconnectFromServer();
+    mConnection->quit();
+    mConnection->wait(3000);
     mConnection->terminate();
 }
