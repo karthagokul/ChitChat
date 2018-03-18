@@ -14,7 +14,8 @@ private:
     ClientConnection *mCon;
     QStringList mFortunes;
     QMutex mMutex;
-    QTimer *mTimer;
+    //QTimer *mTimer;
+    bool runMe;
 public:
     SimulatorThread(QObject *aParent);
     virtual ~SimulatorThread();

@@ -21,7 +21,7 @@ SimulatorApp::SimulatorApp(int argc,char **argv)
 void SimulatorApp::start()
 {
     //So here Simulator will initialise and destroy connections in every 60 Seconds
-    mTimer->start(60*1000);
+    mTimer->start(20*1000);
     //for now one time call slot
     onTimeOut();
 }

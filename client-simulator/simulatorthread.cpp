@@ -14,10 +14,10 @@ SimulatorThread::SimulatorThread(QObject *aParent):QThread(aParent)
     mCon->setServer("127.0.0.1",8080); //Later on from command line parsing .
     mCon->setUserName(SysUtils::generateRandomName());
     mCon->connectNow();
-    mTimer=new QTimer(this);
-    connect(mTimer,SIGNAL(timeout()),this,SLOT(onEchoMessage()));
-    mTimer->start(4000);
-    mCon->start();
+   // mTimer=new QTimer(this);
+    //connect(mTimer,SIGNAL(timeout()),this,SLOT(onEchoMessage()));
+    //mTimer->start(4000);
+    //mCon->start();
 }
 
 void SimulatorThread::onEchoMessage()
@@ -26,12 +26,16 @@ void SimulatorThread::onEchoMessage()
     mMutex.lock();
     QString data=mFortunes.at(qrand() % mFortunes.size());
     mCon->send(data);
+    runMe=true;
     mMutex.unlock();
 }
 
 SimulatorThread::~SimulatorThread()
 {
    mCon->disconnectFromServer();
+   mMutex.lock();
+   runMe=false;
+   mMutex.unlock();
    mCon->terminate();
 }
 
@@ -42,7 +46,11 @@ void SimulatorThread::onNewMessage(QString message,QString sender)
 
 void SimulatorThread::run()
 {
-    exec();
+    while(runMe)
+    {
+        sleep(10);
+        onEchoMessage();
+    }
 }
 
 void SimulatorThread::onError(QString aMessage)
