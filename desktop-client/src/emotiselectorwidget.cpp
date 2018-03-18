@@ -52,7 +52,6 @@ EmotiSelectorWidget::EmotiSelectorWidget(QWidget *parent) :
 
 void EmotiSelectorWidget::onButtonClicked(QAbstractButton *button)
 {
-    qDebug()<<"Clicked";
     QString data=button->property("id").toString();
     data=data.simplified();
     emit emojiSelected(data);

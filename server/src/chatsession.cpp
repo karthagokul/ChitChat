@@ -35,7 +35,7 @@ void ChatSession::run()
 #ifdef ENABLE_WEBSOCKETS
 void ChatSession::onWebSocketRead(const QString &message)
 {
-    qDebug()<<"On Message"<<message;
+    //qDebug()<<"On Message"<<message;
     if(mType==WebSocketClient)
     {
         QByteArray data=message.toUtf8();
@@ -57,10 +57,10 @@ void ChatSession::onClientRead(QByteArray data)
     switch (newMessage.type())
     {
     case Message::Invalid:
-        qDebug()<<"Unsupported Message Type";
+        //qDebug()<<"Unsupported Message Type";
         break;
     case Message::LogOn:
-        qDebug()<<"New Login : " <<newMessage.sender();
+        //qDebug()<<"New Login : " <<newMessage.sender();
         mName=newMessage.sender();
         emit loggedin(newMessage,id());
         break;
@@ -88,14 +88,14 @@ void ChatSession::write(QByteArray aData)
     if(mType==WebSocketClient)
     {
         mWebSocket->sendTextMessage(QString::fromUtf8(aData));
-        qDebug()<<"WebClient";
+        //qDebug()<<"WebClient";
     }
 #endif
 }
 
 void ChatSession::disconnected()
 {
-    qDebug()<<"Disconnected";
+    //qDebug()<<"Disconnected";
     emit disconnecting(id());
     if(mType==TCPSocketClient)
     {

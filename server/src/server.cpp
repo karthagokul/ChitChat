@@ -55,7 +55,7 @@ bool Server::init()
 
 void Server::onNewTCPConnection()
 {
-    qDebug()<<"Got a New TCP    Connection";
+    //qDebug()<<"Got a New TCP    Connection";
     QTcpSocket *socket=mSocketServer->nextPendingConnection();
     ChatSession *session=new ChatSession(socket);
     mChatRoom->registerSession(session);
@@ -64,7 +64,7 @@ void Server::onNewTCPConnection()
 #ifdef ENABLE_WEBSOCKETS
 void Server::onNewWebConnection()
 {
-    qDebug()<<"Got a New WebConnection";
+    //qDebug()<<"Got a New WebConnection";
     QWebSocket* socket=mWebSocketServer->nextPendingConnection();
     ChatSession *session=new ChatSession(socket);
     mChatRoom->registerSession(session);

@@ -51,7 +51,6 @@ bool Message::jsonObjectToString(QJsonObject &aObject,QString aID,QString &aStri
 
 Message::Message(const QByteArray &aData):QObject(0)
 {
-    qDebug()<<aData;
     QJsonDocument d = QJsonDocument::fromJson(aData);
     if(d.isNull())
     {
@@ -106,7 +105,7 @@ Message::Message(const QByteArray &aData):QObject(0)
             {
                 qCritical()<<COMMAND_MENTION<<":Parse Error";
                 mType=Invalid;
-                qDebug()<<"Sending"<<mMessage<<" to "<<mBuddies;
+                //qDebug()<<"Sending"<<mMessage<<" to "<<mBuddies;
             }
         }
         else if(command==COMMAND_ONLINE)

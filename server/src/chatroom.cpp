@@ -35,7 +35,7 @@ void ChatRoom::sendPrivateMessage(const Message &aMessage,const QString&sessionI
         i.next();
         if(i.value()->name() ==aMessage.sender() || aMessage.buddies().contains(i.value()->name()))
         {
-            qDebug()<<"Sending to "<<i.value()->name();
+            //qDebug()<<"Sending to "<<i.value()->name();
             i.value()->write(aMessage.toByteArray());
         }
     }
@@ -69,7 +69,7 @@ QStringList ChatRoom::getBuddies(const QString&sessionId)
             buddies<<i.value()->name();
         }
     }
-    qDebug()<<"Buddies"<<buddies;
+    //qDebug()<<"Buddies"<<buddies;
     return buddies;
 }
 
@@ -80,7 +80,7 @@ void ChatRoom::closeAllSessions()
 
 void ChatRoom::onClientDisConnection(const QString&sessionId)
 {
-    qDebug()<<"Disconncted";
+    //qDebug()<<"Disconncted";
     //Lets Remove the Online Client from Chatroom
     QString signOffUser;
     QMapIterator<QString,ChatSession*> i(mOnlineClients);
@@ -117,6 +117,6 @@ void ChatRoom::registerSession(ChatSession *session)
     connect(newClient,SIGNAL(newmessage(Message,QString)),this,SLOT(onMessageRequest(Message,QString)));
     //Lets Insert to Online map
     mOnlineClients.insert(newClient->id(),newClient);
-    qDebug()<<"Total Clients Online"<<mOnlineClients.count();
+    //qDebug()<<"Total Clients Online"<<mOnlineClients.count();
     newClient->start();
 }

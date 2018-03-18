@@ -31,5 +31,5 @@ int ServerApplication::start()
 
 void ServerApplication::onExit()
 {
-    qDebug()<<"Exiting";
+    //qDebug()<<"Exiting";
 }

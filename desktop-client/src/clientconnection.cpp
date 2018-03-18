@@ -50,7 +50,7 @@ void ClientConnection::run()
 
 void ClientConnection::onError(QAbstractSocket::SocketError aError)
 {
-    qDebug()<<aError;
+    //qDebug()<<aError;
 
     switch(aError)
     {
@@ -70,10 +70,10 @@ void ClientConnection::onError(QAbstractSocket::SocketError aError)
 
 void ClientConnection::disconnectFromServer()
 {
-    qDebug()<<"Disconnecting from Server";
+    //qDebug()<<"Disconnecting from Server";
     if(!isActive())
     {
-        qDebug()<<"Do not have Active Session";
+        //qDebug()<<"Do not have Active Session";
         return;
     }
     mSocket->disconnectFromHost();
@@ -97,13 +97,13 @@ void ClientConnection::onRead()
         break;
     case Message::LogOff:
         //Log off Notification from Other Client, Lets update the latest buddies
-        qDebug()<<"Logoff"<<readmessage.buddies();
+        //qDebug()<<"Logoff"<<readmessage.buddies();
         mBuddies=readmessage.buddies();
         emit newMessage(readmessage.message(),"Server");
         emit buddylist(readmessage.message());
         break;
     case Message::Chat:
-        qDebug()<<mName<<"> "<<readmessage.sender()<<"::"<<readmessage.message();
+        //qDebug()<<mName<<"> "<<readmessage.sender()<<"::"<<readmessage.message();
         if(readmessage.sender()==mName)
         {
             emit newMessage(readmessage.message(),"You",false);
