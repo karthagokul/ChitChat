@@ -1,85 +1,39 @@
 
 #include <QtTest/QtTest>
-#include "discoveryhandler.h"
 #include "messagehandler.h"
-
-class UTDiscoveryManager:public DiscoveryManager
-{
-    Q_OBJECT
-public slots:
-    void testParseForSearch_EmptyString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        QString data;
-        QSignalSpy spy(this, SIGNAL (search()));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-    }
-
-    void testParseForSearch_ValidString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        QString data(SEARCH_QUERY_STRING);
-        QSignalSpy spy(this, SIGNAL (search()));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 1);
-    }
-
-    void testParseForSearch_InValidString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        QString data("INVALID_STRING");
-        QSignalSpy spy(this, SIGNAL (search()));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-    }
-
-    void testParseForResults_EmptyString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        QString data;
-        QSignalSpy spy(this, SIGNAL (search()));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-    }
-
-    void testParseForResults_ValidString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        QString data(SEARCH_RESULT_SUBSTRING+QString("192.168.100.3:8080"));
-        QSignalSpy spy(this, SIGNAL (serverinfo(QString,int)));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 1);
-    }
-
-    void testParseForResults_InValidString()
-    {
-        qDebug()<<Q_FUNC_INFO;
-        //case 0
-        QString data(SEARCH_RESULT_SUBSTRING+QString("192.168.100.3#8080"));
-        QSignalSpy spy(this, SIGNAL (serverinfo(QString,int)));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-        spy.clear();
-
-        //case 1
-        data=QString(SEARCH_RESULT_SUBSTRING+QString(":8080"));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-        spy.clear();
-
-        //case 2
-        data=QString(SEARCH_RESULT_SUBSTRING+QString("192.168.100.3:"));
-        DiscoveryManager::parseRequest(data);
-        QVERIFY(spy.count()== 0);
-    }
-};
 
 class UTMessage:public Message
 {
     Q_OBJECT
 public slots:
-    void testConstruction()
+    void testInvalidParameter()
+    {
+          QString data;
+          data=QString("{\"command\":\"logon\",\"sender\":\"Gokul\",\"message\":\"hello\"}");
+          Message m3(data.toLocal8Bit());
+          QVERIFY(m3.type()==Message::LogOn);
+          QVERIFY(m3.sender()==QString("Gokul"));
+          QVERIFY(m3.message()==QString());
+    }
+
+    void testValidChatCase()
+    {
+          QString data;
+          data=QString("{\"command\":\"chat\",\"sender\":\"Kartha\",\"message\":\"hello\"}");
+          Message m4(data.toLocal8Bit());
+          QVERIFY(m4.type()==Message::Chat);
+          QVERIFY(m4.sender()==QString("Kartha"));
+          QVERIFY(m4.message()==QString("hello"));
+    }
+
+    void testToByteArrayChat()
+    {
+         Message newMessage(Message::Chat,"Gokul","Hi",QStringList());
+         QString result("{\n    \"command\": \"chat\",\n    \"message\": \"Hi\",\n    \"sender\": \"Gokul\"\n}\n");
+         QVERIFY(result.toLocal8Bit()==newMessage.toByteArray());
+    }
+
+    void testEverythingElse()
     {
         qDebug()<<Q_FUNC_INFO;
         QString data;
@@ -101,21 +55,6 @@ public slots:
         QVERIFY(m2.type()==Message::LogOn);
         QVERIFY(m2.sender()==QString("Gokul"));
 
-        //case 3
-        //Valid String with a invalid message parameter
-        data=QString("{\"command\":\"logon\",\"sender\":\"Gokul\",\"message\":\"hello\"}");
-        Message m3(data.toLocal8Bit());
-        QVERIFY(m3.type()==Message::LogOn);
-        QVERIFY(m3.sender()==QString("Gokul"));
-        QVERIFY(m3.message()==QString());
-
-        //case 4
-        //Valid Chat Case
-        data=QString("{\"command\":\"chat\",\"sender\":\"Kartha\",\"message\":\"hello\"}");
-        Message m4(data.toLocal8Bit());
-        QVERIFY(m4.type()==Message::Chat);
-        QVERIFY(m4.sender()==QString("Kartha"));
-        QVERIFY(m4.message()==QString("hello"));
 
         //case 5
         //Valid Chat Case invalid Message
@@ -132,15 +71,10 @@ private slots:
     void runAll()
     {
         UTMessage m;
-        m.testConstruction();
-
-        UTDiscoveryManager d;
-        d.testParseForSearch_EmptyString();
-        d.testParseForSearch_InValidString();
-        d.testParseForSearch_ValidString();
-        d.testParseForResults_EmptyString();
-        d.testParseForResults_InValidString();
-        d.testParseForResults_ValidString();
+        m.testEverythingElse();
+        m.testInvalidParameter();
+        m.testValidChatCase();
+        m.testToByteArrayChat();
     }
 };
 
